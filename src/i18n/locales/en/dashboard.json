@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your progress and statistics",
+    "totalScore": "Total Score",
+    "accuracy": "Accuracy",
+    "streak": "Streak",
+    "badges": "Badges",
+    "portfolioProjects": "Portfolio Projects",
+    "technicalModules": "Technical Modules",
+    "recentBadges": "Recent Badges",
+    "featuredQuestions": "Featured Questions",
+    "practice": "Practice",
+    "questions": "questions",
+    "completed": "completed",
+    "earned": "earned",
+    "correct": "correct",
+    "days": "days",
+    "streakDays_one": "{{count}} day",
+    "streakDays_other": "{{count}} days",
+    "keepGoing": "Keep it going!",
+    "answered": "questions answered"
+  }
+}

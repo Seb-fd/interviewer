@@ -1,0 +1,33 @@
+{
+  "gamification": {
+    "streak": {
+      "title": "Racha Diaria",
+      "days": "días",
+      "day": "día",
+      "keepGoing": "¡Sigue así!",
+      "streakLost": "Racha perdida. ¡Comienza de nuevo!",
+      "milestone": "¡Hito alcanzado!"
+    },
+    "badges": {
+      "title": "Insignias",
+      "earned": "Obtenidas",
+      "locked": "Bloqueada",
+      "lockedLabel": "Bloqueada",
+      "progress": "Progreso",
+      "unlocked": "¡Insignia Desbloqueada!"
+    },
+    "score": {
+      "title": "Puntuación",
+      "total": "Puntuación Total",
+      "points": "puntos"
+    },
+    "leaderboard": {
+      "title": "Clasificación",
+      "rank": "Rango",
+      "global": "Global",
+      "weekly": "Semanal",
+      "byCategory": "Por Categoría",
+      "you": "Tú"
+    }
+  }
+}

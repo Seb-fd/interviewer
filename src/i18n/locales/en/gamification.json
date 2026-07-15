@@ -1,0 +1,33 @@
+{
+  "gamification": {
+    "streak": {
+      "title": "Daily Streak",
+      "days": "days",
+      "day": "day",
+      "keepGoing": "Keep it going!",
+      "streakLost": "Streak lost. Start again!",
+      "milestone": "Milestone reached!"
+    },
+    "badges": {
+      "title": "Badges",
+      "earned": "Earned",
+      "locked": "Locked",
+      "lockedLabel": "Locked",
+      "progress": "Progress",
+      "unlocked": "Badge Unlocked!"
+    },
+    "score": {
+      "title": "Score",
+      "total": "Total Score",
+      "points": "points"
+    },
+    "leaderboard": {
+      "title": "Leaderboard",
+      "rank": "Rank",
+      "global": "Global",
+      "weekly": "Weekly",
+      "byCategory": "By Category",
+      "you": "You"
+    }
+  }
+}

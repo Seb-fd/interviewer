@@ -1,0 +1,41 @@
+{
+  "common": {
+    "appName": "Plataforma de Entrevistas Técnicas",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "clear": "Limpiar",
+    "all": "Todos",
+    "day": "día",
+    "days": "días",
+    "best": "Mejor: {{count}} días"
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "categories": "Categorías",
+    "profile": "Perfil",
+    "leaderboard": "Clasificación"
+  },
+  "footer": {
+    "platform": "Plataforma de Desafíos de Entrevistas Técnicas",
+    "builtBy": "Creado por {{name}}"
+  },
+  "theme": {
+    "toggle": "Cambiar tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  }
+}

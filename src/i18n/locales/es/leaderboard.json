@@ -1,0 +1,16 @@
+{
+  "leaderboard": {
+    "title": "Clasificación",
+    "subtitle": "Compite con otros desarrolladores",
+    "global": "Global",
+    "weekly": "Semanal",
+    "firstPlace": "Primero",
+    "secondPlace": "Segundo",
+    "thirdPlace": "Tercero",
+    "you": "Tú",
+    "noData": "No hay datos disponibles",
+    "rank": "Posición",
+    "accuracy": "precisión",
+    "pts": "pts"
+  }
+}

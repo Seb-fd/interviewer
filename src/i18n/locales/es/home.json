@@ -1,0 +1,37 @@
+{
+  "home": {
+    "title": "Desafío de Entrevistas Técnicas",
+    "subtitle": "Domina tus habilidades técnicas con desafíos basados en proyectos",
+    "modes": {
+      "title": "Elige Tu Modo",
+      "project": {
+        "title": "Por Proyecto",
+        "description": "Practica preguntas basadas en tus proyectos del portafolio",
+        "viewAll": "Ver Todos los Proyectos"
+      },
+      "tech": {
+        "title": "Por Tecnología",
+        "description": "Practica preguntas organizadas por stack tecnológico",
+        "viewAll": "Ver Todas las Tecnologías"
+      }
+    },
+    "getStarted": "Comenzar",
+    "viewDashboard": "Ver Panel",
+    "features": {
+      "title": "Por Qué Practicar Con Nosotros",
+      "streaks": {
+        "title": "Rachas Diarias",
+        "description": "Construye consistencia con rachas diarias de práctica y gana recompensas"
+      },
+      "badges": {
+        "title": "Insignias y Logros",
+        "description": "Desbloquea insignias mientras completas desafíos y dominas temas"
+      },
+      "progress": {
+        "title": "Sigue Tu Progreso",
+        "description": "Monitorea tu mejora con estadísticas detalladas y análisis"
+      }
+    },
+    "footer": "Hecho para desarrolladores, por desarrolladores"
+  }
+}

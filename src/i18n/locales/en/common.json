@@ -1,0 +1,41 @@
+{
+  "common": {
+    "appName": "Tech Interview Platform",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "clear": "Clear",
+    "all": "All",
+    "day": "day",
+    "days": "days",
+    "best": "Best: {{count}} days"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "categories": "Categories",
+    "profile": "Profile",
+    "leaderboard": "Leaderboard"
+  },
+  "footer": {
+    "platform": "Tech Interview Challenge Platform",
+    "builtBy": "Built by {{name}}"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

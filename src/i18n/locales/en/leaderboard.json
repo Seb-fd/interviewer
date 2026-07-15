@@ -1,0 +1,16 @@
+{
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Compete with other developers",
+    "global": "Global",
+    "weekly": "Weekly",
+    "firstPlace": "1st Place",
+    "secondPlace": "2nd Place",
+    "thirdPlace": "3rd Place",
+    "you": "You",
+    "noData": "No data available",
+    "rank": "Rank",
+    "accuracy": "accuracy",
+    "pts": "pts"
+  }
+}

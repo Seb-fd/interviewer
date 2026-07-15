@@ -1,0 +1,90 @@
+{
+  "questions": {
+    "title": "Preguntas Técnicas",
+    "selectCategory": "Selecciona una categoría para comenzar",
+    "totalQuestions": "Preguntas Totales",
+    "completed": "Completadas",
+    "results": "resultados",
+    "categoryNotFound": "Categoría no encontrada",
+    "backToDashboard": "Volver al Panel",
+    "backToCategory": "Volver a la categoría",
+    "noQuestions": "No hay preguntas para los filtros seleccionados",
+    "modes": {
+      "project": "Por Proyecto",
+      "tech": "Por Tecnología",
+      "projectDesc": "Practica preguntas basadas en tus proyectos del portafolio",
+      "techDesc": "Practica preguntas organizadas por tecnología"
+    },
+    "difficulty": {
+      "basic": "Básico",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "senior": "Senior",
+      "all": "Todos los Niveles"
+    },
+    "question": {
+      "context": "Contexto",
+      "hint": "Pista",
+      "hints": "Pistas",
+      "showHint": "Mostrar Pista",
+      "hideHint": "Ocultar Pista",
+      "hintUsed": "Pista utilizada",
+      "hintsUsed": "Pistas utilizadas",
+      "submit": "Enviar Respuesta",
+      "submitting": "Enviando...",
+      "nextQuestion": "Siguiente Pregunta",
+      "backToCategory": "Volver a Categoría",
+      "correct": "¡Correcto!",
+      "incorrect": "Incorrecto",
+      "timeSpent": "Tiempo empleado",
+      "pointsEarned": "Puntos ganados",
+      "yourAnswer": "Tu Respuesta",
+      "expectedAnswer": "Respuesta Esperada",
+      "showSolution": "Ver Solución",
+      "close": "Cerrar",
+      "hereIsSolution": "Aquí está la solución de referencia",
+      "keepPracticing": "Sigue practicando para mejorar",
+      "youEarned": "Ganaste",
+      "points": "puntos",
+      "description": "Descripción",
+      "navigation": "Navegación",
+      "statistics": "Estadísticas",
+      "lines": "líneas",
+      "empty": "Vacía",
+      "remaining": "restantes",
+      "revealHint": "Revelar pista",
+      "noHints": "No hay pistas disponibles",
+      "questionOf": "Pregunta {{current}} de {{total}}",
+      "answer": "Respuesta",
+      "placeholderCoding": "// Escribe tu código aquí...",
+      "placeholderConceptual": "Escribe tu respuesta conceptual aquí...",
+      "pts": "{{count}} pts",
+      "min": "~{{count}} min"
+    },
+    "practiceModes": {
+      "study": "Estudio",
+      "exam": "Examen"
+    },
+    "types": {
+      "coding": "Código",
+      "conceptual": "Concepto",
+      "multiple_choice": "Opción"
+    },
+    "solution": {
+      "title": "Solución",
+      "explanation": "Explicación",
+      "stepByStep": "Paso a Paso",
+      "whyThisWorks": "Por Qué Funciona",
+      "alternatives": "Enfoques Alternativos",
+      "commonMistakes": "Errores Comunes",
+      "resources": "Recursos Adicionales"
+    },
+    "timer": {
+      "start": "Iniciar",
+      "pause": "Pausar",
+      "resume": "Continuar",
+      "reset": "Reiniciar",
+      "timeUp": "¡Tiempo Agotado!"
+    }
+  }
+}

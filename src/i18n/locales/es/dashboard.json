@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "title": "Panel de Control",
+    "subtitle": "Tu progreso y estadísticas",
+    "totalScore": "Puntuación Total",
+    "accuracy": "Precisión",
+    "streak": "Racha",
+    "badges": "Insignias",
+    "portfolioProjects": "Proyectos del Portfolio",
+    "technicalModules": "Módulos Técnicos",
+    "recentBadges": "Insignias Recientes",
+    "featuredQuestions": "Preguntas Destacadas",
+    "practice": "Practicar",
+    "questions": "preguntas",
+    "completed": "completadas",
+    "earned": "obtenidas",
+    "correct": "correctas",
+    "days": "días",
+    "streakDays_one": "{{count}} día",
+    "streakDays_other": "{{count}} días",
+    "keepGoing": "¡Sigue así!",
+    "answered": "preguntas respondidas"
+  }
+}

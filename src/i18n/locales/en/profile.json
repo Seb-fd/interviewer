@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "title": "Profile",
+    "settings": "Settings",
+    "badges": "Badges",
+    "earnedBadges": "Earned Badges",
+    "availableBadges": "Available Badges",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "dangerZone": "Danger Zone",
+    "resetProgress": "Reset Progress",
+    "progressByCategory": "Progress by Category",
+    "earned": "earned",
+    "available": "available",
+    "noBadgesEarned": "You haven't earned any badges yet",
+    "completeToUnlock": "Complete questions to unlock badges",
+    "selectLanguage": "Select your preferred language",
+    "selectTheme": "Choose your preferred color theme",
+    "dangerZoneWarning": "Irreversible actions. Proceed with caution.",
+    "english": "English",
+    "spanish": "Español",
+    "resetConfirm": "Are you sure you want to reset all progress? This action cannot be undone."
+  }
+}

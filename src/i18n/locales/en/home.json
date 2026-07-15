@@ -1,0 +1,37 @@
+{
+  "home": {
+    "title": "Tech Interview Challenge",
+    "subtitle": "Master your technical skills with project-based challenges",
+    "modes": {
+      "title": "Choose Your Mode",
+      "project": {
+        "title": "By Project",
+        "description": "Practice questions based on your portfolio projects",
+        "viewAll": "View All Projects"
+      },
+      "tech": {
+        "title": "By Technology",
+        "description": "Practice questions organized by technology stack",
+        "viewAll": "View All Technologies"
+      }
+    },
+    "getStarted": "Get Started",
+    "viewDashboard": "View Dashboard",
+    "features": {
+      "title": "Why Practice With Us",
+      "streaks": {
+        "title": "Daily Streaks",
+        "description": "Build consistency with daily practice streaks and earn rewards"
+      },
+      "badges": {
+        "title": "Badges & Achievements",
+        "description": "Unlock badges as you complete challenges and master topics"
+      },
+      "progress": {
+        "title": "Track Progress",
+        "description": "Monitor your improvement with detailed statistics and analytics"
+      }
+    },
+    "footer": "Built for developers, by developers"
+  }
+}

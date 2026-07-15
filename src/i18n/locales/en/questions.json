@@ -1,0 +1,90 @@
+{
+  "questions": {
+    "title": "Technical Questions",
+    "selectCategory": "Select a category to begin",
+    "totalQuestions": "Total Questions",
+    "completed": "Completed",
+    "results": "results",
+    "categoryNotFound": "Category not found",
+    "backToDashboard": "Back to Dashboard",
+    "backToCategory": "Back to category",
+    "noQuestions": "No questions for selected filters",
+    "modes": {
+      "project": "By Project",
+      "tech": "By Technology",
+      "projectDesc": "Practice questions based on your portfolio projects",
+      "techDesc": "Practice questions organized by technology"
+    },
+    "difficulty": {
+      "basic": "Basic",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "senior": "Senior",
+      "all": "All Levels"
+    },
+    "question": {
+      "context": "Context",
+      "hint": "Hint",
+      "hints": "Hints",
+      "showHint": "Show Hint",
+      "hideHint": "Hide Hint",
+      "hintUsed": "Hint used",
+      "hintsUsed": "Hints used",
+      "submit": "Submit Answer",
+      "submitting": "Submitting...",
+      "nextQuestion": "Next Question",
+      "backToCategory": "Back to Category",
+      "correct": "Correct!",
+      "incorrect": "Incorrect",
+      "timeSpent": "Time spent",
+      "pointsEarned": "Points earned",
+      "yourAnswer": "Your Answer",
+      "expectedAnswer": "Expected Answer",
+      "showSolution": "Show Solution",
+      "close": "Close",
+      "hereIsSolution": "Here is the reference solution",
+      "keepPracticing": "Keep practicing to improve",
+      "youEarned": "You earned",
+      "points": "points",
+      "description": "Description",
+      "navigation": "Navigation",
+      "statistics": "Statistics",
+      "lines": "lines",
+      "empty": "Empty",
+      "remaining": "remaining",
+      "revealHint": "Reveal hint",
+      "noHints": "No hints available",
+      "questionOf": "Question {{current}} of {{total}}",
+      "answer": "Answer",
+      "placeholderCoding": "// Write your code here...",
+      "placeholderConceptual": "Write your conceptual answer here...",
+      "pts": "{{count}} pts",
+      "min": "~{{count}} min"
+    },
+    "practiceModes": {
+      "study": "Study",
+      "exam": "Exam"
+    },
+    "types": {
+      "coding": "Code",
+      "conceptual": "Concept",
+      "multiple_choice": "Choice"
+    },
+    "solution": {
+      "title": "Solution",
+      "explanation": "Explanation",
+      "stepByStep": "Step by Step",
+      "whyThisWorks": "Why This Works",
+      "alternatives": "Alternative Approaches",
+      "commonMistakes": "Common Mistakes",
+      "resources": "Additional Resources"
+    },
+    "timer": {
+      "start": "Start",
+      "pause": "Pause",
+      "resume": "Resume",
+      "reset": "Reset",
+      "timeUp": "Time's Up!"
+    }
+  }
+}

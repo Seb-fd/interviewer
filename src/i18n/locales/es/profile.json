@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "title": "Perfil",
+    "settings": "Ajustes",
+    "badges": "Insignias",
+    "earnedBadges": "Insignias Obtenidas",
+    "availableBadges": "Insignias Disponibles",
+    "language": "Idioma",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "dangerZone": "Zona de Peligro",
+    "resetProgress": "Restablecer Progreso",
+    "progressByCategory": "Progreso por Categoría",
+    "earned": "obtenidas",
+    "available": "disponibles",
+    "noBadgesEarned": "Aún no has obtenido ninguna insignia",
+    "completeToUnlock": "Completa preguntas para desbloquear insignias",
+    "selectLanguage": "Selecciona tu idioma preferido",
+    "selectTheme": "Elige tu tema de color preferido",
+    "dangerZoneWarning": "Acciones irreversibles. Procede con precaución.",
+    "english": "English",
+    "spanish": "Español",
+    "resetConfirm": "¿Estás seguro de que quieres reiniciar todo el progreso? Esta acción no se puede deshacer."
+  }
+}
