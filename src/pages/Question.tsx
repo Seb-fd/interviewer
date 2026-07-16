@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useUser } from '@clerk/clerk-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card'
 import { Button } from '@components/ui/button'
 import { Badge } from '@components/ui/badge'
@@ -16,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { ArrowLeft, ArrowRight, Lightbulb, CheckCircle, XCircle, MessageSquare, Eye, Timer, Zap } from 'lucide-react'
-import { cn, formatTime } from '@/lib/utils'
+import { cn, formatTime, getGuestId } from '@/lib/utils'
 import { useSubmitAnswer, useQuestions } from '@/hooks'
 import { useQuestionStore } from '@/stores'
 import { toast } from 'sonner'
@@ -26,7 +25,6 @@ export default function QuestionPage() {
   const { slug, questionId } = useParams<{ slug: string; questionId: string }>()
   const { t, i18n } = useTranslation()
   const isSpanish = i18n.language === 'es'
-  const { user } = useUser()
 
   const {
     timeSpent,
@@ -91,7 +89,7 @@ export default function QuestionPage() {
   }, [resetQuestion])
 
   const handleSubmit = useCallback(async () => {
-    if (!currentQuestion || !userAnswer.trim() || !user) return
+    if (!currentQuestion || !userAnswer.trim()) return
 
     const isCorrect = userAnswer.trim().toLowerCase() === solution.trim().toLowerCase()
     const pointsEarned = isCorrect ? Math.max(0, currentQuestion.points - (hintsRevealed * 10) - Math.floor(timeSpent / 10)) : 0
@@ -99,7 +97,7 @@ export default function QuestionPage() {
     setIsSubmitting(true)
     try {
       const result = await submitAnswer.mutateAsync({
-        userId: user.id,
+        userId: getGuestId(),
         questionId: currentQuestion.id,
         categoryId: slug || '',
         answer: userAnswer,
@@ -116,7 +114,7 @@ export default function QuestionPage() {
     } finally {
       setIsSubmitting(false)
     }
-  }, [currentQuestion, userAnswer, timeSpent, hintsRevealed, submitAnswer, setIsSubmitting, setIsSubmitted, t, solution, slug, user])
+  }, [currentQuestion, userAnswer, timeSpent, hintsRevealed, submitAnswer, setIsSubmitting, setIsSubmitted, t, solution, slug])
 
   const handleShowSolution = () => {
     setShowSolution(true)

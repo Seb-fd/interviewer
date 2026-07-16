@@ -9,11 +9,10 @@ import { Flame, Trophy, Target, Zap, BookOpen, Settings, User, Award, Check } fr
 import { BadgeItem } from '@components/dashboard/badge-item'
 import { useCategories, useBadges } from '@/hooks'
 import { useUIStore, useProgressStore } from '@/stores'
-import { useUser } from '@clerk/clerk-react'
+import { t } from 'i18next'
 
 export default function Profile() {
-  const { t, i18n } = useTranslation()
-  const { user } = useUser()
+  const { i18n } = useTranslation()
   const isSpanish = i18n.language === 'es'
 
   const { data: categories = [] } = useCategories()
@@ -46,10 +45,10 @@ export default function Profile() {
 
         <TabsContent value="profile" className="mt-6 space-y-6">
           <div className="flex items-center gap-6">
-            <Avatar fallback={user?.fullName?.[0] || user?.username?.[0] || 'U'} className="h-24 w-24 text-xl" />
+            <Avatar fallback="G" className="h-24 w-24 text-xl" />
             <div>
-              <h1 className="text-2xl font-bold">{user?.fullName || user?.username || t('profile.title', 'User')}</h1>
-              <p className="text-muted-foreground">{user?.primaryEmailAddress?.emailAddress || ''}</p>
+              <h1 className="text-2xl font-bold">Guest</h1>
+              <p className="text-muted-foreground">Local session</p>
               <div className="flex items-center gap-2 mt-2">
                 <Flame className="h-4 w-4 text-orange-500" />
                 <span className="text-sm">

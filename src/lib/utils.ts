@@ -60,3 +60,14 @@ export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str
   return str.slice(0, maxLength - 3) + '...'
 }
+
+const GUEST_ID_KEY = 'interviewer-guest-id'
+
+export function getGuestId(): string {
+  let guestId = localStorage.getItem(GUEST_ID_KEY)
+  if (!guestId) {
+    guestId = `guest-${crypto.randomUUID()}`
+    localStorage.setItem(GUEST_ID_KEY, guestId)
+  }
+  return guestId
+}
