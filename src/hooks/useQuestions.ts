@@ -9,13 +9,16 @@ export function useQuestions(categorySlug?: string, difficulty?: string | null) 
     queryKey: ['questions', categorySlug, difficulty],
     queryFn: async () => {
       try {
+        console.log('[DEBUG useQuestions] categorySlug:', categorySlug, 'difficulty:', difficulty)
         let questions: Question[] = []
         if (categorySlug) {
           questions = await getQuestionsByCategorySlug(categorySlug)
+          console.log('[DEBUG useQuestions] questions from getQuestionsByCategorySlug:', questions)
         }
         if (difficulty) {
           questions = questions.filter(q => q.difficulty === difficulty)
         }
+        console.log('[DEBUG useQuestions] returning questions:', questions)
         return questions
       } catch (error) {
         console.error('Error fetching questions:', error)
