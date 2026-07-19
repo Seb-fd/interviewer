@@ -109,7 +109,7 @@ export default function QuestionPage() {
       setSubmitResult(result)
       setResultDialogOpen(true)
       setIsSubmitted(true)
-    } catch (error) {
+    } catch {
       toast.error(t('errors.generic', 'Something went wrong. Please try again.'))
     } finally {
       setIsSubmitting(false)

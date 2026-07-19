@@ -1,5 +1,3 @@
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
-
 export interface Category {
   id: string
   slug: string
@@ -29,79 +27,13 @@ const mockCategories: Category[] = [
 ]
 
 export async function getCategories(): Promise<Category[]> {
-  if (!isSupabaseConfigured) {
-    return mockCategories
-  }
-
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching categories:', error)
-    return mockCategories
-  }
-
-  return data.map((cat: any) => ({
-    id: cat.id,
-    slug: cat.slug,
-    nameEn: cat.name_en,
-    nameEs: cat.name_es,
-    descriptionEn: cat.description_en,
-    descriptionEs: cat.description_es,
-    icon: cat.icon,
-    color: cat.color,
-    type: cat.type,
-    totalQuestions: 0,
-  }))
+  return mockCategories
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  if (!isSupabaseConfigured) {
-    return mockCategories.find((c: Category) => c.slug === slug) || null
-  }
-
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('slug', slug)
-    .single()
-
-  if (error) {
-    console.error('Error fetching category:', error)
-    return mockCategories.find((c: Category) => c.slug === slug) || null
-  }
-
-  return {
-    id: data.id,
-    slug: data.slug,
-    nameEn: data.name_en,
-    nameEs: data.name_es,
-    descriptionEn: data.description_en,
-    descriptionEs: data.description_es,
-    icon: data.icon,
-    color: data.color,
-    type: data.type,
-    totalQuestions: 0,
-  }
+  return mockCategories.find((c: Category) => c.slug === slug) || null
 }
 
-export async function getCategoryQuestionCount(categoryId: string): Promise<number> {
-  if (!isSupabaseConfigured) {
-    return 0
-  }
-
-  const { count, error } = await supabase
-    .from('questions')
-    .select('*', { count: 'exact', head: true })
-    .eq('category_id', categoryId)
-
-  if (error) {
-    console.error('Error counting questions:', error)
-    return 0
-  }
-
-  return count || 0
+export async function getCategoryQuestionCount(_categoryId: string): Promise<number> {
+  return 0
 }

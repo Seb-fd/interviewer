@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { saveUserProgress, saveCategoryProgress, getAllCategoryProgress, type CategoryProgress as DBCategoryProgress } from '@/lib/queries/progress'
 
 export interface CategoryProgress {
   questionsCompleted: string[]
@@ -37,13 +36,11 @@ interface ProgressState {
   markQuestionCompleted: (categorySlug: string, questionId: string, correct: boolean, points: number) => void
   addBadge: (badgeSlug: string) => void
   resetProgress: () => void
-  syncToSupabase: (userId: string) => Promise<void>
-  loadFromSupabase: (userId: string) => Promise<void>
 }
 
 export const useProgressStore = create<ProgressState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       totalScore: 0,
       totalQuestions: 0,
       correctAnswers: 0,
@@ -121,60 +118,6 @@ export const useProgressStore = create<ProgressState>()(
         categoryProgress: {},
         recentBadges: [],
       }),
-
-      syncToSupabase: async (userId: string) => {
-        const state = get()
-        try {
-          await saveUserProgress(userId, {
-            totalPoints: state.totalScore,
-            streakDays: state.currentStreak,
-            lastActivityDate: state.lastActivityDate,
-            longestStreak: state.longestStreak,
-            totalQuestionsAnswered: state.totalQuestions,
-          })
-
-          for (const [categoryId, progress] of Object.entries(state.categoryProgress)) {
-            const dbProgress: Partial<DBCategoryProgress> = {
-              completedQuestions: progress.questionsCompleted,
-              correctCount: progress.correctCount,
-              incorrectCount: progress.questionsCompleted.length - progress.correctCount,
-              totalPoints: progress.totalScore,
-            }
-            await saveCategoryProgress(userId, categoryId, dbProgress)
-          }
-        } catch (error) {
-          console.error('Error syncing progress to Supabase:', error)
-        }
-      },
-
-      loadFromSupabase: async (userId: string) => {
-        try {
-          const allProgress = await getAllCategoryProgress(userId)
-          const categoriesProgress: Record<string, CategoryProgress> = {}
-
-          for (const [categoryId, progress] of Object.entries(allProgress)) {
-            categoriesProgress[categoryId] = {
-              questionsCompleted: progress.completedQuestions,
-              correctCount: progress.correctCount,
-              totalScore: progress.totalPoints,
-              accuracy: progress.completedQuestions.length > 0
-                ? Math.round((progress.correctCount / progress.completedQuestions.length) * 100)
-                : 0,
-              bestStreak: 0,
-              avgTimeSpent: 0,
-            }
-          }
-
-          set((state) => ({
-            categoryProgress: {
-              ...state.categoryProgress,
-              ...categoriesProgress,
-            },
-          }))
-        } catch (error) {
-          console.error('Error loading progress from Supabase:', error)
-        }
-      },
     }),
     {
       name: 'progress-storage',

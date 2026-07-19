@@ -20,14 +20,6 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   const { t } = useTranslation()
   const [, setTheme] = React.useState<Theme>('system')
 
-  React.useEffect(() => {
-    const stored = localStorage.getItem('theme') as Theme | null
-    if (stored) {
-      setTheme(stored)
-      applyTheme(stored)
-    }
-  }, [])
-
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement
     root.classList.remove('light', 'dark')
@@ -41,6 +33,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       root.classList.add(newTheme)
     }
   }
+
+  React.useEffect(() => {
+    const stored = localStorage.getItem('theme') as Theme | null
+    if (stored) {
+      setTheme(stored)
+      applyTheme(stored)
+    }
+  }, [])
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme)

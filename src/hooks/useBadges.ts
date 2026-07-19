@@ -14,7 +14,7 @@ export function useBadges(userId?: string) {
           const progress = await fetchBadgeProgress(userId)
           return badges.map(badge => ({
             ...badge,
-            earned: progress[badge.id] >= (badge as any).requirementValue,
+            earned: progress[badge.id] >= 100,
             progress: progress[badge.id] || 0,
             earnedAt: undefined,
           }))

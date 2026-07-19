@@ -1,5 +1,3 @@
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
-
 export interface Badge {
   id: string
   slug: string
@@ -25,76 +23,13 @@ const mockBadges: Badge[] = [
 ]
 
 export async function getBadges(): Promise<Badge[]> {
-  if (!isSupabaseConfigured) {
-    return mockBadges
-  }
-
-  const { data, error } = await supabase
-    .from('badges')
-    .select('*')
-    .eq('is_active', true)
-    .order('tier', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching badges:', error)
-    return mockBadges
-  }
-
-  return data.map(badge => ({
-    id: badge.id,
-    slug: badge.slug,
-    nameEn: badge.name_en,
-    nameEs: badge.name_es,
-    descriptionEn: badge.description_en,
-    descriptionEs: badge.description_es,
-    icon: badge.icon,
-    color: badge.color,
-    tier: badge.tier,
-    earned: false,
-  }))
+  return mockBadges
 }
 
-export async function getBadgeProgress(userId: string): Promise<Record<string, number>> {
-  if (!isSupabaseConfigured) {
-    return {}
-  }
-
-  const { data, error } = await supabase
-    .from('user_badges')
-    .select('badge_id, progress')
-    .eq('user_id', userId)
-
-  if (error) {
-    console.error('Error fetching badge progress:', error)
-    return {}
-  }
-
-  const progress: Record<string, number> = {}
-  data?.forEach(entry => {
-    progress[entry.badge_id] = entry.progress
-  })
-
-  return progress
+export async function getBadgeProgress(_userId: string): Promise<Record<string, number>> {
+  return {}
 }
 
-export async function awardBadge(userId: string, badgeId: string): Promise<boolean> {
-  if (!isSupabaseConfigured) {
-    return false
-  }
-
-  const { error } = await supabase
-    .from('user_badges')
-    .upsert({
-      user_id: userId,
-      badge_id: badgeId,
-      awarded_at: new Date().toISOString(),
-      progress: 100,
-    })
-
-  if (error) {
-    console.error('Error awarding badge:', error)
-    return false
-  }
-
-  return true
+export async function awardBadge(_userId: string, _badgeId: string): Promise<boolean> {
+  return false
 }
