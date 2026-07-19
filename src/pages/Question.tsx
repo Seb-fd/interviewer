@@ -22,7 +22,7 @@ import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/common/loading-spinner'
 
 export default function QuestionPage() {
-  const { slug, questionId } = useParams<{ slug: string; questionId: string }>()
+  const { slug, id: questionId } = useParams<{ slug: string; id: string }>()
   const { t, i18n } = useTranslation()
   const isSpanish = i18n.language === 'es'
 
@@ -51,15 +51,8 @@ export default function QuestionPage() {
 
   const { data: questions = [], isLoading } = useQuestions(slug || undefined)
 
-  console.log('[DEBUG QuestionPage] slug:', slug, 'questionId:', questionId)
-  console.log('[DEBUG QuestionPage] questions:', questions)
-  console.log('[DEBUG QuestionPage] questions.length:', questions.length)
-
   const currentQuestion = questions.find(q => q.id === questionId)
-  console.log('[DEBUG QuestionPage] currentQuestion:', currentQuestion)
-
   const currentIndex = questions.findIndex(q => q.id === questionId)
-  console.log('[DEBUG QuestionPage] currentIndex:', currentIndex)
   const prevQuestion = currentIndex > 0 ? questions[currentIndex - 1] : null
   const nextQuestion = currentIndex < questions.length - 1 ? questions[currentIndex + 1] : null
 
