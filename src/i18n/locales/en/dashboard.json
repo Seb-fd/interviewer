@@ -19,6 +19,7 @@
     "streakDays_one": "{{count}} day",
     "streakDays_other": "{{count}} days",
     "keepGoing": "Keep it going!",
-    "answered": "questions answered"
+    "answered_one": "{{count}} question answered",
+    "answered_other": "{{count}} questions answered"
   }
 }

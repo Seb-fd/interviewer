@@ -293,7 +293,7 @@ export default function QuestionPage() {
                       className="w-full"
                     >
                       <Lightbulb className="h-4 w-4 mr-2" />
-                      {t('questions.question.revealHint', `Reveal hint (${hints.length - hintsRevealed} remaining)`)}
+                      {t('questions.question.revealHint', { remaining: hints.length - hintsRevealed })}
                     </Button>
                   )}
                 </>

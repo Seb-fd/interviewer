@@ -52,7 +52,7 @@
       "lines": "lines",
       "empty": "Empty",
       "remaining": "remaining",
-      "revealHint": "Reveal hint",
+      "revealHint": "Reveal hint ({{remaining}} remaining)",
       "noHints": "No hints available",
       "questionOf": "Question {{current}} of {{total}}",
       "answer": "Answer",

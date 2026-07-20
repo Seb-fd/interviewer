@@ -74,11 +74,11 @@ export function QuestionCard({
             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Lightbulb className="h-3 w-3" />
-                {t('questions.question.pts', { count: points })}
+                {points || 0} pts
               </span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {t('questions.question.min', { count: Math.ceil(points / 10) })}
+                ~{Math.ceil((points || 0) / 10)} min
               </span>
             </div>
           </div>

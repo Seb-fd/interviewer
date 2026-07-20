@@ -52,7 +52,7 @@
       "lines": "líneas",
       "empty": "Vacía",
       "remaining": "restantes",
-      "revealHint": "Revelar pista",
+      "revealHint": "Revelar pista ({{remaining}} restantes)",
       "noHints": "No hay pistas disponibles",
       "questionOf": "Pregunta {{current}} de {{total}}",
       "answer": "Respuesta",
