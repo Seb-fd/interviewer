@@ -33,7 +33,7 @@ export function DifficultyFilter({
             : 'bg-background border-input hover:bg-accent'
         )}
       >
-        {t('common.all', 'All')}
+        {t('all', 'All')}
       </button>
       {difficulties.map((diff) => (
         <button

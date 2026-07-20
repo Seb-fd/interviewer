@@ -23,19 +23,19 @@ export function Header({ className }: HeaderProps) {
         <div className="flex items-center gap-2 mr-4">
           <Trophy className="h-6 w-6 text-primary" />
           <Link to="/" className="font-semibold">
-            {t('common.appName', 'Tech Interview')}
+            {t('appName', 'Tech Interview')}
           </Link>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
-            {t('common.nav.home', 'Home')}
+            {t('nav.home', 'Home')}
           </Link>
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
-            {t('common.nav.dashboard', 'Dashboard')}
+            {t('nav.dashboard', 'Dashboard')}
           </Link>
           <Link to="/leaderboard" className="text-muted-foreground hover:text-foreground transition-colors">
-            {t('common.nav.leaderboard', 'Leaderboard')}
+            {t('nav.leaderboard', 'Leaderboard')}
           </Link>
         </nav>
 
@@ -47,7 +47,7 @@ export function Header({ className }: HeaderProps) {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/profile">
               <User className="h-4 w-4 mr-1" />
-              {t('common.nav.profile', 'Profile')}
+              {t('nav.profile', 'Profile')}
             </Link>
           </Button>
           <LanguageToggle />
@@ -72,28 +72,28 @@ export function Header({ className }: HeaderProps) {
               className="text-sm py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('common.nav.home', 'Home')}
+              {t('nav.home', 'Home')}
             </Link>
             <Link
               to="/dashboard"
               className="text-sm py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('common.nav.dashboard', 'Dashboard')}
+              {t('nav.dashboard', 'Dashboard')}
             </Link>
             <Link
               to="/leaderboard"
               className="text-sm py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('common.nav.leaderboard', 'Leaderboard')}
+              {t('nav.leaderboard', 'Leaderboard')}
             </Link>
             <Link
               to="/profile"
               className="text-sm py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('common.nav.profile', 'Profile')}
+              {t('nav.profile', 'Profile')}
             </Link>
           </nav>
         </div>

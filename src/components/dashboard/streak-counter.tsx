@@ -25,8 +25,8 @@ export function StreakCounter({
     }
   }, [streakDays])
 
-  const dayLabel = streakDays === 1 ? t('common.day', 'day') : t('common.days', 'days')
-  const bestLabel = t('common.best', { count: longestStreak, defaultValue: `Best: ${longestStreak} days` })
+  const dayLabel = streakDays === 1 ? t('day', 'day') : t('days', 'days')
+  const bestLabel = t('best', { count: longestStreak, defaultValue: `Best: ${longestStreak} days` })
 
   return (
     <div

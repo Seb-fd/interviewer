@@ -54,21 +54,21 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         <Button variant="ghost" size="sm" className={cn('gap-2', className)}>
           <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">{t('common.theme.toggle', 'Toggle theme')}</span>
+          <span className="sr-only">{t('theme.toggle', 'Toggle theme')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleThemeChange('light')}>
           <Sun className="mr-2 h-4 w-4" />
-          {t('common.theme.light', 'Light')}
+          {t('theme.light', 'Light')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleThemeChange('dark')}>
           <Moon className="mr-2 h-4 w-4" />
-          {t('common.theme.dark', 'Dark')}
+          {t('theme.dark', 'Dark')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleThemeChange('system')}>
           <Monitor className="mr-2 h-4 w-4" />
-          {t('common.theme.system', 'System')}
+          {t('theme.system', 'System')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

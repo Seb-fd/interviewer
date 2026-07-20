@@ -173,17 +173,17 @@ export default function Home() {
         <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
-            <span className="font-semibold">{t('common.appName', 'Tech Interview')}</span>
+            <span className="font-semibold">{t('appName', 'Tech Interview')}</span>
           </div>
           <p className="text-sm text-muted-foreground">
             {t('home.footer', { defaultValue: 'Built for developers, by developers' })}
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
             <Link to="/dashboard" className="hover:text-foreground">
-              {t('common.nav.dashboard', 'Dashboard')}
+              {t('nav.dashboard', 'Dashboard')}
             </Link>
             <Link to="/leaderboard" className="hover:text-foreground">
-              {t('common.nav.leaderboard', 'Leaderboard')}
+              {t('nav.leaderboard', 'Leaderboard')}
             </Link>
           </div>
         </div>
