@@ -14,10 +14,10 @@ export function PageLayout() {
       <footer className="border-t py-6 md:py-0">
         <div className="container flex flex-col md:flex-row items-center justify-between gap-4 md:h-16">
           <p className="text-sm text-muted-foreground">
-            {t('common.footer.platform', 'Tech Interview Challenge Platform')}
+            {t('footer.platform', 'Tech Interview Challenge Platform')}
           </p>
           <p className="text-sm text-muted-foreground">
-            {t('common.footer.builtBy', { name: 'Sebastian Florez' })}
+            {t('footer.builtBy', { name: 'Sebastian Florez' })}
           </p>
         </div>
       </footer>
