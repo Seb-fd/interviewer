@@ -2,6 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { PageLayout } from '@components/layout'
 import { ProtectedRoute } from '@components/auth'
+import { OfflineIndicator } from '@components/common/offline-indicator'
+import { InstallPWA } from '@components/common/install-pwa'
+import { useRegisterSW } from '@/hooks/useRegisterSW'
 import { Suspense, lazy } from 'react'
 
 const Home = lazy(() => import('@pages/Home'))
@@ -10,6 +13,7 @@ const Category = lazy(() => import('@pages/Category'))
 const Question = lazy(() => import('@pages/Question'))
 const Profile = lazy(() => import('@pages/Profile'))
 const Leaderboard = lazy(() => import('@pages/Leaderboard'))
+const ReviewSession = lazy(() => import('@pages/ReviewSession'))
 const NotFound = lazy(() => import('@pages/NotFound'))
 
 function LoadingFallback() {
@@ -21,8 +25,11 @@ function LoadingFallback() {
 }
 
 function App() {
+  useRegisterSW()
+
   return (
     <>
+      <OfflineIndicator />
       <Routes>
         <Route element={<PageLayout />}>
           <Route
@@ -84,6 +91,16 @@ function App() {
             }
           />
           <Route
+            path="/review"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <ReviewSession />
+                </Suspense>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="*"
             element={
               <Suspense fallback={<LoadingFallback />}>
@@ -93,6 +110,7 @@ function App() {
           />
         </Route>
       </Routes>
+      <InstallPWA />
       <Toaster position="top-center" richColors />
     </>
   )

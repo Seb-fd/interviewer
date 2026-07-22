@@ -4,7 +4,9 @@ import { type SupportedLanguage } from '@/i18n/config'
 import i18n from '@/i18n'
 
 type Theme = 'light' | 'dark' | 'system'
-type QuestionMode = 'study' | 'exam'
+export type StudyMode = 'learn' | 'practice' | 'review'
+export type ExamMode = 'exam'
+export type QuestionMode = StudyMode | ExamMode
 
 interface UIState {
   theme: Theme
@@ -23,7 +25,7 @@ export const useUIStore = create<UIState>()(
     (set) => ({
       theme: 'system',
       language: 'en',
-      questionMode: 'study',
+      questionMode: 'practice',
       sidebarOpen: false,
 
       setTheme: (theme) => {
@@ -60,6 +62,8 @@ export const useUIStore = create<UIState>()(
 )
 
 function applyTheme(theme: Theme) {
+  if (typeof document === 'undefined') return
+
   const root = document.documentElement
   root.classList.remove('light', 'dark')
 

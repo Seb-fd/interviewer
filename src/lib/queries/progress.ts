@@ -20,43 +20,13 @@ export interface DailyActivity {
   streakMaintained: boolean
 }
 
-export async function getUserProgress(_userId: string): Promise<UserProgress | null> {
-  return null
-}
+export { 
+  getUserProgress,
+  getCategoryProgress,
+  getAllProgress,
+  recordAttempt,
+  isQuestionCompleted,
+  getCompletedQuestionIds,
+} from '@/lib/db/progress'
 
-export async function getCategoryProgress(_userId: string, _categoryId: string): Promise<CategoryProgress | null> {
-  return null
-}
-
-export async function getAllCategoryProgress(_userId: string): Promise<Record<string, CategoryProgress>> {
-  return {}
-}
-
-export async function saveUserProgress(
-  _userId: string,
-  _progress: Partial<UserProgress>
-): Promise<boolean> {
-  return true
-}
-
-export async function saveCategoryProgress(
-  _userId: string,
-  _categoryId: string,
-  _progress: Partial<CategoryProgress>
-): Promise<boolean> {
-  return true
-}
-
-export async function recordAttempt(
-  _userId: string,
-  _questionId: string,
-  _categoryId: string,
-  _isCorrect: boolean,
-  _points: number
-): Promise<boolean> {
-  return true
-}
-
-export async function getDailyActivity(_userId: string, _days: number = 30): Promise<DailyActivity[]> {
-  return []
-}
+export { calculateStreak, getRecentActivity, recordActivity } from '@/lib/db/activity'

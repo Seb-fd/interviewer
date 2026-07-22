@@ -1,0 +1,138 @@
+{
+  "learning": {
+    "title": "Panel de Aprendizaje",
+    "subtitle": "Sigue tu dominio y progreso de estudio",
+    "masteryLevel": {
+      "title": "Nivel de Dominio",
+      "new": "Nuevo",
+      "learning": "Aprendiendo",
+      "reviewing": "Repasando",
+      "mastered": "Dominado",
+      "description": "{{count}} preguntas en este nivel"
+    },
+    "weakAreas": {
+      "title": "Áreas Débiles",
+      "subtitle": "Temas que necesitan más práctica",
+      "noWeakAreas": "¡Excelente! No se identificaron áreas débiles",
+      "improve": "Enfócate en mejorar"
+    },
+    "reviewQueue": {
+      "title": "Cola de Repaso",
+      "subtitle": "Tarjetas pendientes de repaso",
+      "dueToday": "Pendientes Hoy",
+      "newCards": "Tarjetas Nuevas",
+      "reviewNow": "Repasar Ahora",
+      "noReviews": "No hay repasos pendientes hoy"
+    },
+    "studyModes": {
+      "title": "Modos de Estudio",
+      "learn": {
+        "title": "Aprender",
+        "description": "Aprendizaje guiado con pistas y comentarios"
+      },
+      "practice": {
+        "title": "Practicar",
+        "description": "Práctica libre con repetición espaciada"
+      },
+      "review": {
+        "title": "Repasar",
+        "description": "Sesión de repaso con repetición espaciada"
+      },
+      "exam": {
+        "title": "Examen",
+        "description": "Simulación de examen cronometrado"
+      }
+    }
+  },
+  "review": {
+    "title": "Sesión de Repaso",
+    "subtitle": "Práctica con repetición espaciada",
+    "progress": "Progreso",
+    "cardsRemaining": "{{count}} tarjetas restantes",
+    "dueCards": "Tarjetas Pendientes",
+    "newCards": "Tarjetas Nuevas",
+    "showAnswer": "Mostrar Respuesta",
+    "again": "Otra vez",
+    "hard": "Difícil",
+    "good": "Bien",
+    "easy": "Fácil",
+    "skip": "Saltar",
+    "complete": {
+      "title": "¡Repaso Completado!",
+      "subtitle": "Has terminado tu sesión de repaso",
+      "cardsReviewed": "Tarjetas Repasadas",
+      "accuracy": "Precisión",
+      "timeSpent": "Tiempo Employado",
+      "continue": "Continuar",
+      "backToDashboard": "Volver al Panel"
+    }
+  },
+  "confidence": {
+    "title": "¿Qué tan seguro te sientes?",
+    "again": "Otra vez",
+    "hard": "Difícil",
+    "good": "Bien",
+    "easy": "Fácil",
+    "againHint": " blackout completo",
+    "hardHint": "Incorrecto pero recordé",
+    "goodHint": "Correcto con esfuerzo",
+    "easyHint": "Recordé perfectamente"
+  },
+  "resources": {
+    "title": "Recursos",
+    "subtitle": "Profundiza tu comprensión con estos materiales seleccionados",
+    "documentation": "Documentación",
+    "tutorial": "Tutorial",
+    "article": "Artículo",
+    "video": "Video",
+    "openExternal": "Se abre en nueva pestaña",
+    "noResources": "No hay recursos disponibles para este tema"
+  },
+  "category": {
+    "mastery": "Dominio",
+    "breakdown": "{{mastered}} dominados, {{learning}} aprendiendo, {{new}} nuevos",
+    "masteryProgress": "Progreso de Dominio",
+    "noData": "Empieza a practicar para ver el progreso por categoría"
+  },
+  "learnMode": {
+    "badge": "Modo Aprender",
+    "badgeLabel": "Modo aprender activo",
+    "stuckPrompt": "¿Atascado? Una pista podría ayudarte a avanzar.",
+    "dismissPrompt": "Descartar sugerencia de pista"
+  },
+  "feedback": {
+    "headers": {
+      "correct": "¡Buen trabajo!",
+      "partial": "¡Casi lo logras!",
+      "incorrect": "No del todo"
+    },
+    "messages": {
+      "correct": "Lo hiciste bien. Exploremos por qué funciona.",
+      "partial": "Vas por buen camino. Repasemos los detalles clave.",
+      "incorrect": "¡Buen intento! Este es un concepto difícil. Vamos a repasarlo."
+    },
+    "viewComparison": "Comparar tu respuesta",
+    "yourAnswer": "Tu respuesta",
+    "expectedAnswer": "Respuesta esperada",
+    "noAnswer": "No se proporcionó respuesta",
+    "showExplanation": "Mostrar explicación",
+    "hideExplanation": "Ocultar explicación",
+    "tips": {
+      "correct": "¡Este concepto está sólido! Sigue construyendo sobre él.",
+      "partial": "Revisa las diferencias clave arriba e intenta un problema similar.",
+      "incorrect": "No te preocupes - revisa la pestaña de recursos para explicaciones más profundas."
+    }
+  },
+  "retention7d": "Retención 7 días",
+  "pwa": {
+    "install": "Instalar App",
+    "installing": "Instalando...",
+    "installDescription": "Obtén acceso sin conexión y una experiencia más rápida",
+    "dismiss": "Cerrar sugerencia de instalación",
+    "offline": {
+      "title": "Trabajando sin conexión",
+      "subtitle": "Tu progreso se guarda localmente"
+    },
+    "online": "De vuelta en línea"
+  }
+}

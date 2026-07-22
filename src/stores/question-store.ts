@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import type { Confidence } from '@/lib/db/types'
 
 interface QuestionState {
   currentQuestionId: string | null
@@ -11,6 +11,7 @@ interface QuestionState {
   isSubmitting: boolean
   isSubmitted: boolean
   showSolution: boolean
+  selectedConfidence: Confidence | null
 
   setCurrentQuestion: (id: string | null, slug: string | null) => void
   startTimer: () => void
@@ -23,14 +24,26 @@ interface QuestionState {
   setIsSubmitting: (submitting: boolean) => void
   setIsSubmitted: (submitted: boolean) => void
   setShowSolution: (show: boolean) => void
+  setSelectedConfidence: (confidence: Confidence | null) => void
   resetQuestion: () => void
 }
 
-export const useQuestionStore = create<QuestionState>()(
-  persist(
-    (set) => ({
-      currentQuestionId: null,
-      currentSlug: null,
+export const useQuestionStore = create<QuestionState>()((set) => ({
+  currentQuestionId: null,
+  currentSlug: null,
+  isTimerRunning: false,
+  timeSpent: 0,
+  hintsRevealed: 0,
+  userAnswer: '',
+  isSubmitting: false,
+  isSubmitted: false,
+  showSolution: false,
+  selectedConfidence: null,
+
+  setCurrentQuestion: (id, slug) => {
+    set({
+      currentQuestionId: id,
+      currentSlug: slug,
       isTimerRunning: false,
       timeSpent: 0,
       hintsRevealed: 0,
@@ -38,51 +51,33 @@ export const useQuestionStore = create<QuestionState>()(
       isSubmitting: false,
       isSubmitted: false,
       showSolution: false,
+      selectedConfidence: null,
+    })
+  },
 
-      setCurrentQuestion: (id, slug) => {
-        set({
-          currentQuestionId: id,
-          currentSlug: slug,
-          isTimerRunning: false,
-          timeSpent: 0,
-          hintsRevealed: 0,
-          userAnswer: '',
-          isSubmitting: false,
-          isSubmitted: false,
-          showSolution: false,
-        })
-      },
+  startTimer: () => set({ isTimerRunning: true }),
+  pauseTimer: () => set({ isTimerRunning: false }),
+  resetTimer: () => set({ isTimerRunning: false, timeSpent: 0 }),
 
-      startTimer: () => set({ isTimerRunning: true }),
-      pauseTimer: () => set({ isTimerRunning: false }),
-      resetTimer: () => set({ isTimerRunning: false, timeSpent: 0 }),
+  tickTimer: () => set((state) => ({ timeSpent: state.timeSpent + 1 })),
 
-      tickTimer: () => set((state) => ({ timeSpent: state.timeSpent + 1 })),
+  revealHint: () => set((state) => ({ hintsRevealed: state.hintsRevealed + 1 })),
+  resetHints: () => set({ hintsRevealed: 0 }),
 
-      revealHint: () => set((state) => ({ hintsRevealed: state.hintsRevealed + 1 })),
-      resetHints: () => set({ hintsRevealed: 0 }),
+  setUserAnswer: (answer) => set({ userAnswer: answer }),
+  setIsSubmitting: (submitting) => set({ isSubmitting: submitting }),
+  setIsSubmitted: (submitted) => set({ isSubmitted: submitted }),
+  setShowSolution: (show) => set({ showSolution: show }),
+  setSelectedConfidence: (confidence) => set({ selectedConfidence: confidence }),
 
-      setUserAnswer: (answer) => set({ userAnswer: answer }),
-      setIsSubmitting: (submitting) => set({ isSubmitting: submitting }),
-      setIsSubmitted: (submitted) => set({ isSubmitted: submitted }),
-      setShowSolution: (show) => set({ showSolution: show }),
-
-      resetQuestion: () => set({
-        isTimerRunning: false,
-        timeSpent: 0,
-        hintsRevealed: 0,
-        userAnswer: '',
-        isSubmitting: false,
-        isSubmitted: false,
-        showSolution: false,
-      }),
-    }),
-    {
-      name: 'question-storage',
-      partialize: (state) => ({
-        currentQuestionId: state.currentQuestionId,
-        currentSlug: state.currentSlug,
-      }),
-    }
-  )
-)
+  resetQuestion: () => set({
+    isTimerRunning: false,
+    timeSpent: 0,
+    hintsRevealed: 0,
+    userAnswer: '',
+    isSubmitting: false,
+    isSubmitted: false,
+    showSolution: false,
+    selectedConfidence: null,
+  }),
+}))

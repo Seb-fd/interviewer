@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card'
@@ -14,12 +14,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ArrowLeft, ArrowRight, Lightbulb, CheckCircle, XCircle, MessageSquare, Eye, Timer, Zap } from 'lucide-react'
-import { cn, formatTime, getGuestId } from '@/lib/utils'
+import { ArrowLeft, ArrowRight, Lightbulb, CheckCircle, XCircle, MessageSquare, Timer, Zap, Brain, HelpCircle, Zap as ZapConfused, AlertTriangle, BookOpen } from 'lucide-react'
+import { cn, formatTime, normalizeAnswer } from '@/lib/utils'
 import { useSubmitAnswer, useQuestions } from '@/hooks'
-import { useQuestionStore } from '@/stores'
+import { useQuestionStore, useProgressStore, useUIStore } from '@/stores'
 import { toast } from 'sonner'
 import { LoadingSpinner } from '@/components/common/loading-spinner'
+import { ResourcesPanel } from '@/components/ui/resources-panel'
+import { EducationalFeedback } from '@/components/ui/educational-feedback'
+import { generateResources } from '@/lib/resources-generator'
+import { useAutoHint } from '@/hooks/useAutoHint'
+
+const TIME_LIMITS: Record<string, number> = {
+  basic: 60,
+  intermediate: 120,
+  advanced: 180,
+  senior: 300,
+}
 
 export default function QuestionPage() {
   const { slug, id: questionId } = useParams<{ slug: string; id: string }>()
@@ -34,6 +45,7 @@ export default function QuestionPage() {
     showSolution,
     isSubmitting,
     isTimerRunning,
+    selectedConfidence,
     startTimer,
     tickTimer,
     revealHint,
@@ -41,13 +53,19 @@ export default function QuestionPage() {
     setIsSubmitted,
     setIsSubmitting,
     setShowSolution,
+    setSelectedConfidence,
     resetQuestion,
   } = useQuestionStore()
+
+  const { currentStreak } = useProgressStore()
+  const questionMode = useUIStore(state => state.questionMode)
 
   const submitAnswer = useSubmitAnswer()
 
   const [resultDialogOpen, setResultDialogOpen] = useState(false)
   const [submitResult, setSubmitResult] = useState<{ isCorrect: boolean; scoreEarned: number } | null>(null)
+  const [confidenceError, setConfidenceError] = useState(false)
+  const [timeUpDialogOpen, setTimeUpDialogOpen] = useState(false)
 
   const { data: questions = [], isLoading } = useQuestions(slug || undefined)
 
@@ -58,22 +76,44 @@ export default function QuestionPage() {
 
   const hints = isSpanish ? currentQuestion?.hintsEs || [] : currentQuestion?.hintsEn || []
   const solution = isSpanish ? currentQuestion?.solutionEs || '' : currentQuestion?.solutionEn || ''
+  const explanation = isSpanish ? currentQuestion?.explanationEs || '' : currentQuestion?.explanationEn || ''
+
+  const resources = useMemo(() => {
+    if (!currentQuestion) return []
+    return generateResources(currentQuestion)
+  }, [currentQuestion])
+
+  const isExamMode = questionMode === 'exam'
+  const isLearnMode = questionMode === 'learn'
+  const isPracticeMode = questionMode === 'practice'
+  const isReviewMode = questionMode === 'review'
+  const hasTimer = isExamMode || isPracticeMode
+  const timeLimit = currentQuestion ? TIME_LIMITS[currentQuestion.difficulty] || 180 : 180
+  const timeRemaining = timeLimit - timeSpent
+  const isTimeWarning = isExamMode && timeRemaining <= 30 && timeRemaining > 0
+  const isTimeCritical = isExamMode && timeRemaining <= 10 && timeRemaining > 0
+
+  const { shouldPromptHint, dismissPrompt } = useAutoHint({
+    isActive: isLearnMode && !isSubmitted,
+    totalHints: hints.length,
+    hintsRevealed,
+  })
 
   const timerStartedRef = useRef(false)
 
   useEffect(() => {
-    if (currentQuestion && !isSubmitted && !timerStartedRef.current) {
+    if (currentQuestion && !isSubmitted && !timerStartedRef.current && hasTimer) {
       timerStartedRef.current = true
       startTimer()
     }
     if (isSubmitted) {
       timerStartedRef.current = false
     }
-  }, [currentQuestion, isSubmitted, startTimer])
+  }, [currentQuestion, isSubmitted, startTimer, hasTimer])
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null
-    if (isTimerRunning && !isSubmitted) {
+    if (isTimerRunning && !isSubmitted && hasTimer) {
       interval = setInterval(() => {
         tickTimer()
       }, 1000)
@@ -81,7 +121,13 @@ export default function QuestionPage() {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isTimerRunning, isSubmitted, tickTimer])
+  }, [isTimerRunning, isSubmitted, tickTimer, hasTimer])
+
+  useEffect(() => {
+    if (hasTimer && timeRemaining <= 0 && !isSubmitted && !isSubmitting) {
+      setTimeUpDialogOpen(true)
+    }
+  }, [hasTimer, timeRemaining, isSubmitted, isSubmitting])
 
   useEffect(() => {
     return () => {
@@ -90,37 +136,45 @@ export default function QuestionPage() {
   }, [resetQuestion])
 
   const handleSubmit = useCallback(async () => {
-    if (!currentQuestion || !userAnswer.trim()) return
+    if (!currentQuestion || !userAnswer.trim()) {
+      toast.error(t('questions.question.attemptRequired', 'Please write your answer first'))
+      return
+    }
 
-    const isCorrect = userAnswer.trim().toLowerCase() === solution.trim().toLowerCase()
-    const pointsEarned = isCorrect ? Math.max(0, currentQuestion.points - (hintsRevealed * 10) - Math.floor(timeSpent / 10)) : 0
+    const needsConfidence = isPracticeMode || isReviewMode
+    if (needsConfidence && !selectedConfidence) {
+      setConfidenceError(true)
+      toast.error(t('questions.question.confidenceRequired', 'Please select your confidence level'))
+      return
+    }
+
+    const isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(solution)
 
     setIsSubmitting(true)
+    setConfidenceError(false)
     try {
       const result = await submitAnswer.mutateAsync({
-        userId: getGuestId(),
         questionId: currentQuestion.id,
-        categoryId: slug || '',
+        categorySlug: slug || '',
         answer: userAnswer,
-        timeSpent,
+        timeSpent: timeSpent,
         hintsUsed: hintsRevealed,
         isCorrect,
-        points: pointsEarned,
+        difficulty: currentQuestion.difficulty,
+        currentStreak,
+        confidence: isExamMode ? 'uncertain' : selectedConfidence ?? undefined,
+        mode: questionMode,
       })
       setSubmitResult(result)
       setResultDialogOpen(true)
+      setShowSolution(true)
       setIsSubmitted(true)
     } catch {
       toast.error(t('errors.generic', 'Something went wrong. Please try again.'))
     } finally {
       setIsSubmitting(false)
     }
-  }, [currentQuestion, userAnswer, timeSpent, hintsRevealed, submitAnswer, setIsSubmitting, setIsSubmitted, t, solution, slug])
-
-  const handleShowSolution = () => {
-    setShowSolution(true)
-    setResultDialogOpen(true)
-  }
+  }, [currentQuestion, userAnswer, timeSpent, hintsRevealed, submitAnswer, setIsSubmitting, setIsSubmitted, setShowSolution, t, solution, slug, currentStreak, selectedConfidence, isExamMode, isPracticeMode, isReviewMode, questionMode])
 
   if (isLoading) {
     return (
@@ -156,7 +210,17 @@ export default function QuestionPage() {
             <h1 className="text-xl font-bold">
               {isSpanish ? currentQuestion.titleEs : currentQuestion.titleEn}
             </h1>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              {isLearnMode && (
+                <Badge
+                  variant="outline"
+                  className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30"
+                  aria-label={t('learnMode.badgeLabel', 'Learn mode active')}
+                >
+                  <BookOpen className="h-3 w-3 mr-1" aria-hidden="true" />
+                  {t('learnMode.badge', 'Learn Mode')}
+                </Badge>
+              )}
               <Badge variant={
                 currentQuestion.difficulty === 'basic' ? 'basic' :
                 currentQuestion.difficulty === 'intermediate' ? 'intermediate' :
@@ -171,23 +235,47 @@ export default function QuestionPage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className={cn(
-            'flex items-center gap-2 px-3 py-2 rounded-lg border',
-            timeSpent > 300 && 'border-red-500/50 bg-red-500/10'
-          )}>
-            <Timer className={cn('h-4 w-4', timeSpent > 300 && 'text-red-500')} />
-            <span className={cn('font-mono', timeSpent > 300 && 'text-red-500')}>
-              {formatTime(timeSpent)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg border">
-            <Zap className="h-4 w-4 text-yellow-500" />
-            <span className="font-semibold">+{currentQuestion.points}</span>
-          </div>
+          {hasTimer && (
+            <div className={cn(
+              'flex items-center gap-2 px-3 py-2 rounded-lg border',
+              isTimeCritical && 'border-red-500 bg-red-500/20',
+              isTimeWarning && !isTimeCritical && 'border-yellow-500 bg-yellow-500/10',
+              timeSpent > 300 && 'border-red-500/50 bg-red-500/10'
+            )}>
+              {isTimeCritical && <AlertTriangle className="h-4 w-4 text-red-500" />}
+              <Timer className={cn(
+                'h-4 w-4',
+                isTimeCritical && 'text-red-500',
+                isTimeWarning && !isTimeCritical && 'text-yellow-500',
+                timeSpent > 300 && 'text-red-500'
+              )} />
+              <span className={cn(
+                'font-mono',
+                isTimeCritical && 'text-red-500 font-bold',
+                isTimeWarning && !isTimeCritical && 'text-yellow-500',
+                timeSpent > 300 && 'text-red-500'
+              )}>
+                {formatTime(Math.max(0, timeRemaining))}
+                <span className="text-xs ml-1">/ {formatTime(timeLimit)}</span>
+              </span>
+            </div>
+          )}
+          {!hasTimer && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border">
+              <Timer className="h-4 w-4 text-muted-foreground" />
+              <span className="font-mono text-muted-foreground">{formatTime(timeSpent)}</span>
+            </div>
+          )}
+          {(isPracticeMode || isExamMode) && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border">
+              <Zap className="h-4 w-4 text-yellow-500" />
+              <span className="font-semibold">+{currentQuestion.points}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <Progress value={(timeSpent / 600) * 100} className="h-1" />
+      <Progress value={hasTimer ? (timeRemaining / timeLimit) * 100 : (timeSpent / 600) * 100} className={cn("h-1", hasTimer && timeRemaining <= 30 && 'bg-red-500')} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
@@ -205,19 +293,25 @@ export default function QuestionPage() {
           </Card>
 
           <Tabs defaultValue="answer" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className={cn("grid w-full", "grid-cols-3")}>
               <TabsTrigger value="answer" className="gap-2">
                 <MessageSquare className="h-4 w-4" />
                 {t('questions.question.yourAnswer', 'Your Answer')}
               </TabsTrigger>
-              <TabsTrigger value="hints" className="gap-2">
-                <Lightbulb className="h-4 w-4" />
-                {t('questions.question.hints', 'Hints')}
-                {hintsRevealed > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 justify-center">
-                    {hintsRevealed}
-                  </Badge>
-                )}
+              {(isPracticeMode || isReviewMode) && (
+                <TabsTrigger value="hints" className="gap-2">
+                  <Lightbulb className="h-4 w-4" />
+                  {t('questions.question.hints', 'Hints')}
+                  {hintsRevealed > 0 && (
+                    <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 justify-center">
+                      {hintsRevealed}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              )}
+              <TabsTrigger value="resources" className="gap-2" id="resources-tab">
+                <BookOpen className="h-4 w-4" />
+                {t('resources.title', 'Resources')}
               </TabsTrigger>
             </TabsList>
 
@@ -229,13 +323,82 @@ export default function QuestionPage() {
                     : t('questions.question.placeholderConceptual')
                 }
                 value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
+                onChange={(e) => {
+                  setUserAnswer(e.target.value)
+                  setConfidenceError(false)
+                }}
                 className="min-h-[200px] font-mono text-sm"
                 disabled={isSubmitted}
               />
-              <div className="flex gap-3">
-                {!isSubmitted ? (
-                  <>
+              {!isSubmitted && (
+                <>
+                  {(isPracticeMode || isReviewMode) && (
+                    <div className="space-y-3">
+                      <div className={cn(
+                        "flex items-center gap-2 text-sm font-medium",
+                        confidenceError ? "text-red-500" : "text-muted-foreground"
+                      )}>
+                        <Brain className="h-4 w-4" />
+                        {t('questions.question.confidenceTitle', 'How confident are you?')}
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Button
+                          type="button"
+                          variant={selectedConfidence === 'know' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            setSelectedConfidence('know')
+                            setConfidenceError(false)
+                          }}
+                          className={cn(
+                            "h-auto py-3 flex-col gap-1",
+                            selectedConfidence === 'know' && "bg-green-600 hover:bg-green-700"
+                          )}
+                        >
+                          <Zap className="h-5 w-5" />
+                          <span className="text-xs">{t('questions.question.confidenceKnow', 'I know this')}</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={selectedConfidence === 'uncertain' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            setSelectedConfidence('uncertain')
+                            setConfidenceError(false)
+                          }}
+                          className={cn(
+                            "h-auto py-3 flex-col gap-1",
+                            selectedConfidence === 'uncertain' && "bg-yellow-600 hover:bg-yellow-700"
+                          )}
+                        >
+                          <HelpCircle className="h-5 w-5" />
+                          <span className="text-xs">{t('questions.question.confidenceUncertain', 'Not sure')}</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={selectedConfidence === 'dont-know' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            setSelectedConfidence('dont-know')
+                            setConfidenceError(false)
+                          }}
+                          className={cn(
+                            "h-auto py-3 flex-col gap-1",
+                            selectedConfidence === 'dont-know' && "bg-red-600 hover:bg-red-700"
+                          )}
+                        >
+                          <ZapConfused className="h-5 w-5" />
+                          <span className="text-xs">{t('questions.question.confidenceDontKnow', 'No idea')}</span>
+                        </Button>
+                      </div>
+                      {confidenceError && (
+                        <p className="text-sm text-red-500">
+                          {t('questions.question.confidenceRequired', 'Please select your confidence level')}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex gap-3">
                     <Button onClick={handleSubmit} disabled={!userAnswer.trim() || isSubmitting}>
                       {isSubmitting ? (
                         t('questions.question.submitting', 'Submitting...')
@@ -246,27 +409,38 @@ export default function QuestionPage() {
                         </>
                       )}
                     </Button>
-                    <Button variant="outline" onClick={handleShowSolution}>
-                      <Eye className="h-4 w-4 mr-2" />
-                      {t('questions.question.showSolution', 'Show Solution')}
-                    </Button>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    {submitResult?.isCorrect ? (
-                      <>
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                        <span>{t('questions.question.correct', 'Correct!')}</span>
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="h-5 w-5 text-red-500" />
-                        <span>{t('questions.question.incorrect', 'Incorrect')}</span>
-                      </>
-                    )}
                   </div>
-                )}
-              </div>
+                </>
+              )}
+              {isSubmitted && (
+                <>
+                  {isLearnMode && submitResult && (
+                    <EducationalFeedback
+                      question={currentQuestion}
+                      isCorrect={submitResult.isCorrect}
+                      userAnswer={userAnswer}
+                      solution={solution}
+                      explanation={explanation}
+                      className="mt-4"
+                    />
+                  )}
+                  {!isLearnMode && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      {submitResult?.isCorrect ? (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                          <span>{t('questions.question.correct', 'Correct!')}</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-5 w-5 text-red-500" />
+                          <span>{t('questions.question.incorrect', 'Incorrect')}</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="hints" className="mt-4 space-y-3">
@@ -296,8 +470,34 @@ export default function QuestionPage() {
                       {t('questions.question.revealHint', { remaining: hints.length - hintsRevealed })}
                     </Button>
                   )}
+
+                  {isLearnMode && shouldPromptHint && hintsRevealed > 0 && hintsRevealed < hints.length && (
+                    <Card className="border-blue-500/30 bg-blue-500/5 mt-3">
+                      <CardContent className="p-3 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Lightbulb className="h-4 w-4 text-blue-500" aria-hidden="true" />
+                          <span className="text-muted-foreground">
+                            {t('learnMode.stuckPrompt', 'Stuck? A hint might help you forward.')}
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={dismissPrompt}
+                          aria-label={t('learnMode.dismissPrompt', 'Dismiss hint suggestion')}
+                          className="h-7 w-7 p-0"
+                        >
+                          <XCircle className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
                 </>
               )}
+            </TabsContent>
+
+            <TabsContent value="resources" className="mt-4">
+              <ResourcesPanel resources={resources} />
             </TabsContent>
           </Tabs>
         </div>
@@ -364,6 +564,28 @@ export default function QuestionPage() {
         </div>
       </div>
 
+      <Dialog open={timeUpDialogOpen} onOpenChange={setTimeUpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-500">
+              <AlertTriangle className="h-5 w-5" />
+              {t('questions.timer.timeUp', "Time's Up!")}
+            </DialogTitle>
+            <DialogDescription>
+              Your time for this question has run out. Your answer will be submitted now.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3">
+            <Button onClick={() => {
+              setTimeUpDialogOpen(false)
+              handleSubmit()
+            }}>
+              Submit Answer
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={resultDialogOpen} onOpenChange={setResultDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -385,14 +607,36 @@ export default function QuestionPage() {
             </DialogDescription>
           </DialogHeader>
 
-          {showSolution && (
-            <Card className="bg-muted/50">
-              <CardContent className="p-4">
-                <pre className="text-sm whitespace-pre-wrap font-mono overflow-x-auto">
-                  {solution}
-                </pre>
-              </CardContent>
-            </Card>
+          {showSolution && (isPracticeMode || isReviewMode || isLearnMode) && (
+            <>
+              {explanation && (
+                <Card className="border-blue-500/20 bg-blue-500/5">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Brain className="h-4 w-4 text-blue-500" />
+                      {t('questions.solution.explanation', 'Explanation')}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {explanation}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+              <Card className="bg-muted/50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">
+                    {t('questions.solution.title', 'Solution')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  <pre className="text-sm whitespace-pre-wrap font-mono overflow-x-auto">
+                    {solution}
+                  </pre>
+                </CardContent>
+              </Card>
+            </>
           )}
 
           <div className="flex justify-end gap-3">

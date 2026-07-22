@@ -10,7 +10,8 @@ import { DifficultyFilter } from '@components/dashboard/difficulty-filter'
 import { ModeSelector } from '@components/dashboard/mode-selector'
 import { ProgressRing } from '@components/dashboard/progress-ring'
 import { ArrowLeft, Target, Zap, BookOpen } from 'lucide-react'
-import { useCategory, useQuestions } from '@/hooks'
+import { useCategory, useQuestionsWithProgress } from '@/hooks'
+import type { QuestionMode } from '@/stores/ui-store'
 
 const iconMap: Record<string, string> = {
   Shield: '🛡️',
@@ -33,10 +34,10 @@ export default function CategoryPage() {
   const isSpanish = i18n.language === 'es'
 
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null)
-  const [selectedMode, setSelectedMode] = useState<'study' | 'exam'>('study')
+  const [selectedMode, setSelectedMode] = useState<QuestionMode>('practice')
 
   const { data: category, isLoading: categoryLoading } = useCategory(slug || '')
-  const { data: questions = [], isLoading: questionsLoading } = useQuestions(slug || '', selectedDifficulty)
+  const { data: questions = [], isLoading: questionsLoading } = useQuestionsWithProgress(slug || '', selectedDifficulty)
 
   const completedCount = questions.filter(q => q.completed).length
   const correctCount = questions.filter(q => q.completed && q.correct).length

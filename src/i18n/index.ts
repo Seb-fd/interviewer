@@ -18,6 +18,8 @@ import gamificationEn from './locales/en/gamification.json'
 import gamificationEs from './locales/es/gamification.json'
 import errorsEn from './locales/en/errors.json'
 import errorsEs from './locales/es/errors.json'
+import learningEn from './locales/en/learning.json'
+import learningEs from './locales/es/learning.json'
 
 export const defaultNS = 'common'
 
@@ -35,6 +37,7 @@ i18n
         questions: questionsEn,
         gamification: gamificationEn,
         errors: errorsEn,
+        learning: learningEn,
       },
       es: {
         common: commonEs,
@@ -45,11 +48,12 @@ i18n
         questions: questionsEs,
         gamification: gamificationEs,
         errors: errorsEs,
+        learning: learningEs,
       },
     },
     fallbackLng: 'en',
     defaultNS,
-    ns: ['common', 'home', 'dashboard', 'profile', 'leaderboard', 'questions', 'gamification', 'errors'],
+    ns: ['common', 'home', 'dashboard', 'profile', 'leaderboard', 'questions', 'gamification', 'errors', 'learning'],
     interpolation: {
       escapeValue: false,
     },

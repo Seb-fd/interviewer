@@ -1,0 +1,138 @@
+{
+  "learning": {
+    "title": "Learning Dashboard",
+    "subtitle": "Track your mastery and study progress",
+    "masteryLevel": {
+      "title": "Mastery Level",
+      "new": "New",
+      "learning": "Learning",
+      "reviewing": "Reviewing",
+      "mastered": "Mastered",
+      "description": "{{count}} questions at this level"
+    },
+    "weakAreas": {
+      "title": "Weak Areas",
+      "subtitle": "Topics that need more practice",
+      "noWeakAreas": "Great job! No weak areas identified",
+      "improve": "Focus on improving"
+    },
+    "reviewQueue": {
+      "title": "Review Queue",
+      "subtitle": "Cards due for review",
+      "dueToday": "Due Today",
+      "newCards": "New Cards",
+      "reviewNow": "Review Now",
+      "noReviews": "No reviews due today"
+    },
+    "studyModes": {
+      "title": "Study Modes",
+      "learn": {
+        "title": "Learn",
+        "description": "Guided learning with hints and feedback"
+      },
+      "practice": {
+        "title": "Practice",
+        "description": "Free practice with spaced repetition"
+      },
+      "review": {
+        "title": "Review",
+        "description": "Spaced repetition review session"
+      },
+      "exam": {
+        "title": "Exam",
+        "description": "Timed exam simulation"
+      }
+    }
+  },
+  "review": {
+    "title": "Review Session",
+    "subtitle": "Spaced repetition practice",
+    "progress": "Progress",
+    "cardsRemaining": "{{count}} cards remaining",
+    "dueCards": "Due Cards",
+    "newCards": "New Cards",
+    "showAnswer": "Show Answer",
+    "again": "Again",
+    "hard": "Hard",
+    "good": "Good",
+    "easy": "Easy",
+    "skip": "Skip",
+    "complete": {
+      "title": "Review Complete!",
+      "subtitle": "You've finished your review session",
+      "cardsReviewed": "Cards Reviewed",
+      "accuracy": "Accuracy",
+      "timeSpent": "Time Spent",
+      "continue": "Continue",
+      "backToDashboard": "Back to Dashboard"
+    }
+  },
+  "confidence": {
+    "title": "How confident do you feel?",
+    "again": "Again",
+    "hard": "Hard",
+    "good": "Good",
+    "easy": "Easy",
+    "againHint": "Complete blackout",
+    "hardHint": "Incorrect but remembered",
+    "goodHint": "Correct with effort",
+    "easyHint": "Perfect recall"
+  },
+  "resources": {
+    "title": "Resources",
+    "subtitle": "Deepen your understanding with these curated materials",
+    "documentation": "Documentation",
+    "tutorial": "Tutorial",
+    "article": "Article",
+    "video": "Video",
+    "openExternal": "Opens in new tab",
+    "noResources": "No resources available for this topic"
+  },
+  "category": {
+    "mastery": "Mastery",
+    "breakdown": "{{mastered}} mastered, {{learning}} learning, {{new}} new",
+    "masteryProgress": "Mastery Progress",
+    "noData": "Start practicing to see category progress"
+  },
+  "learnMode": {
+    "badge": "Learn Mode",
+    "badgeLabel": "Learn mode active",
+    "stuckPrompt": "Stuck? A hint might help you forward.",
+    "dismissPrompt": "Dismiss hint suggestion"
+  },
+  "feedback": {
+    "headers": {
+      "correct": "Nice work!",
+      "partial": "Almost there!",
+      "incorrect": "Not quite"
+    },
+    "messages": {
+      "correct": "You got it right. Let's explore why this works.",
+      "partial": "You're on the right track. Let's review the key details.",
+      "incorrect": "Good try! This is a tricky concept. Let's walk through it."
+    },
+    "viewComparison": "Compare your answer",
+    "yourAnswer": "Your answer",
+    "expectedAnswer": "Expected answer",
+    "noAnswer": "No answer provided",
+    "showExplanation": "Show explanation",
+    "hideExplanation": "Hide explanation",
+    "tips": {
+      "correct": "This concept is solid. Keep building on it!",
+      "partial": "Review the key differences above and try a similar problem.",
+      "incorrect": "No worries - check the resources tab for deeper explanations."
+    }
+  },
+  "retention7d": "7-day retention",
+  "pwa": {
+    "install": "Install App",
+    "installing": "Installing...",
+    "installDescription": "Get offline access and a faster experience",
+    "dismiss": "Dismiss install prompt",
+    "offline": {
+      "title": "Working offline",
+      "subtitle": "Your progress is being saved locally"
+    },
+    "online": "Back online"
+  }
+}

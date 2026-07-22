@@ -71,3 +71,12 @@ export function getGuestId(): string {
   }
   return guestId
 }
+
+export function normalizeAnswer(answer: string): string {
+  return answer
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/^[\s-]+|[\s-]+$/g, '')
+}

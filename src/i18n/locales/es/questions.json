@@ -59,7 +59,13 @@
       "placeholderCoding": "// Escribe tu código aquí...",
       "placeholderConceptual": "Escribe tu respuesta conceptual aquí...",
       "pts": "{{count}} pts",
-      "min": "~{{count}} min"
+      "min": "~{{count}} min",
+      "confidenceTitle": "¿Qué tan seguro estás?",
+      "confidenceKnow": "Sé la respuesta",
+      "confidenceUncertain": "No estoy seguro",
+      "confidenceDontKnow": "No tengo idea",
+      "attemptRequired": "Por favor escribe tu respuesta primero",
+      "confidenceRequired": "Por favor selecciona tu nivel de confianza"
     },
     "practiceModes": {
       "study": "Estudio",

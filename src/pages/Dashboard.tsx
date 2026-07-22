@@ -6,10 +6,11 @@ import { StatsCard } from '@components/dashboard/stats-card'
 import { StreakCounter } from '@components/dashboard/streak-counter'
 import { BadgeItem } from '@components/dashboard/badge-item'
 import { ProgressRing } from '@components/dashboard/progress-ring'
-import { QuestionCard } from '@components/dashboard/question-card'
+import { QuestionCard } from '@/components/dashboard/question-card'
 import { CategoryIcon } from '@/components/dashboard/category-icon'
+import { LearningStatsCard } from '@/components/dashboard/learning-stats-card'
 import { Trophy, Target, Flame, Award } from 'lucide-react'
-import { useCategories, useBadges, useQuestions } from '@/hooks'
+import { useCategories, useBadges, useQuestionsWithProgress } from '@/hooks'
 import { useProgressStore } from '@/stores/progress-store'
 
 export default function Dashboard() {
@@ -18,7 +19,7 @@ export default function Dashboard() {
 
   const { data: categories = [] } = useCategories()
   const { data: badges = [] } = useBadges()
-  const { data: questions = [] } = useQuestions()
+  const { data: questions = [] } = useQuestionsWithProgress()
 
   const { totalScore, totalQuestions, correctAnswers, currentStreak, longestStreak, categoryProgress } = useProgressStore()
   const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0
@@ -68,6 +69,10 @@ export default function Dashboard() {
           icon={Award}
           description={`${earnedBadges.length} ${t('dashboard.earned', 'earned')}`}
         />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <LearningStatsCard />
       </div>
 
       <div>

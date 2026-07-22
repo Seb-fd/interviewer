@@ -1,28 +1,42 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getQuestionsByCategorySlug, getQuestionById, type Question } from '@/lib/queries/questions'
-import { recordAttempt } from '@/lib/queries/progress'
+import { useQuery } from '@tanstack/react-query'
+import { getQuestions as fetchQuestions, getQuestionsByCategorySlug, getQuestionById, getQuestionsWithProgress, type Question, type Difficulty, type QuestionWithProgress } from '@/lib/queries/questions'
 
-export type { Question }
+export type { Question, Difficulty, QuestionWithProgress }
 
 export function useQuestions(categorySlug?: string, difficulty?: string | null) {
   return useQuery({
     queryKey: ['questions', categorySlug, difficulty],
     queryFn: async () => {
       try {
-        let questions: Question[] = []
         if (categorySlug) {
-          questions = await getQuestionsByCategorySlug(categorySlug)
+          const questions = await getQuestionsByCategorySlug(categorySlug)
+          if (difficulty) {
+            return questions.filter(q => q.difficulty === difficulty)
+          }
+          return questions
         }
-        if (difficulty) {
-          questions = questions.filter(q => q.difficulty === difficulty)
-        }
-        return questions
+        return fetchQuestions()
       } catch (error) {
         console.error('Error fetching questions:', error)
         throw new Error('Failed to fetch questions')
       }
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
+  })
+}
+
+export function useQuestionsWithProgress(categorySlug?: string, difficulty?: string | null) {
+  return useQuery({
+    queryKey: ['questionsWithProgress', categorySlug, difficulty],
+    queryFn: async () => {
+      try {
+        return await getQuestionsWithProgress(categorySlug, difficulty || undefined)
+      } catch (error) {
+        console.error('Error fetching questions with progress:', error)
+        throw new Error('Failed to fetch questions')
+      }
+    },
+    staleTime: Infinity,
   })
 }
 
@@ -38,47 +52,6 @@ export function useQuestion(questionId: string) {
       }
     },
     enabled: !!questionId,
-  })
-}
-
-interface SubmitAnswerParams {
-  userId: string
-  questionId: string
-  categoryId: string
-  answer: string
-  timeSpent: number
-  hintsUsed: number
-  isCorrect: boolean
-  points: number
-}
-
-interface SubmitAnswerResult {
-  success: boolean
-  isCorrect: boolean
-  scoreEarned: number
-}
-
-export function useSubmitAnswer() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (params: SubmitAnswerParams): Promise<SubmitAnswerResult> => {
-      const { userId, questionId, categoryId, isCorrect, points } = params
-
-      await recordAttempt(userId, questionId, categoryId, isCorrect, points)
-
-      return {
-        success: true,
-        isCorrect,
-        scoreEarned: points,
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions'] })
-      queryClient.invalidateQueries({ queryKey: ['progress'] })
-    },
-    onError: (error) => {
-      console.error('Error submitting answer:', error)
-    },
+    staleTime: Infinity,
   })
 }

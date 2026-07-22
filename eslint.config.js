@@ -38,6 +38,6 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**', '*.config.js', '.react-router/**'],
+    ignores: ['dist/**', 'node_modules/**', '*.config.js', 'scripts/**', '.react-router/**'],
   },
 ]

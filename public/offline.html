@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Working offline - your progress is saved locally" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>Working Offline - Tech Interview Platform</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        color: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        line-height: 1.6;
+      }
+
+      main {
+        max-width: 32rem;
+        width: 100%;
+        background: white;
+        border-radius: 1rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
+
+      .icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4.5rem;
+        height: 4.5rem;
+        background: #fef3c7;
+        border-radius: 50%;
+        margin-bottom: 1.5rem;
+      }
+
+      .icon svg {
+        width: 2.5rem;
+        height: 2.5rem;
+        color: #f59e0b;
+      }
+
+      h1 {
+        font-size: 1.625rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: #0f172a;
+      }
+
+      p {
+        color: #475569;
+        margin-bottom: 2rem;
+        font-size: 0.9375rem;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      button {
+        font-family: inherit;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        padding: 0.6875rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        min-height: 44px;
+        min-width: 44px;
+        transition: all 0.15s ease;
+      }
+
+      button:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+
+      .primary {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .primary:hover {
+        background: #2563eb;
+      }
+
+      .secondary {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+
+      .secondary:hover {
+        background: #e2e8f0;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        button {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main role="main">
+      <div class="icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636a9 9 0 010 12.728M5.636 18.364a9 9 0 010-12.728M12 9v4m0 4h.01" />
+        </svg>
+      </div>
+      <h1>Working Offline</h1>
+      <p>You're not connected to the internet, but don't worry - your progress is being saved locally and will sync when you're back online.</p>
+      <div class="actions">
+        <button type="button" class="primary" onclick="window.location.reload()">
+          Try Again
+        </button>
+        <button type="button" class="secondary" onclick="history.length > 1 ? history.back() : (window.location.href = '/')">
+          Go Back
+        </button>
+      </div>
+    </main>
+    <script>
+      window.addEventListener('online', function () {
+        window.location.reload()
+      })
+    </script>
+  </body>
+</html>

@@ -59,7 +59,13 @@
       "placeholderCoding": "// Write your code here...",
       "placeholderConceptual": "Write your conceptual answer here...",
       "pts": "{{count}} pts",
-      "min": "~{{count}} min"
+      "min": "~{{count}} min",
+      "confidenceTitle": "How confident are you?",
+      "confidenceKnow": "I know this",
+      "confidenceUncertain": "Not sure",
+      "confidenceDontKnow": "No idea",
+      "attemptRequired": "Please write your answer first",
+      "confidenceRequired": "Please select your confidence level"
     },
     "practiceModes": {
       "study": "Study",
