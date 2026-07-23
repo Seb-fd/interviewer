@@ -10,6 +10,15 @@
       "mastered": "Mastered",
       "description": "{{count}} questions at this level"
     },
+    "dueToday": "Due Today",
+    "mastered": "Mastered",
+    "learning": "Learning",
+    "startReview": "Start Review Session",
+    "allCaughtUp": "✨ All caught up! No reviews due.",
+    "startLearning": "Start practicing to see your learning progress!",
+    "startPracticing": "Start practicing to see category progress",
+    "due": "due",
+    "questions": "questions",
     "weakAreas": {
       "title": "Weak Areas",
       "subtitle": "Topics that need more practice",
@@ -21,6 +30,7 @@
       "subtitle": "Cards due for review",
       "dueToday": "Due Today",
       "newCards": "New Cards",
+      "dueCards": "Due Cards",
       "reviewNow": "Review Now",
       "noReviews": "No reviews due today"
     },
@@ -28,19 +38,23 @@
       "title": "Study Modes",
       "learn": {
         "title": "Learn",
-        "description": "Guided learning with hints and feedback"
+        "description": "Guided learning with hints and feedback",
+        "cta": "Start Learning"
       },
       "practice": {
         "title": "Practice",
-        "description": "Free practice with spaced repetition"
+        "description": "Free practice with spaced repetition",
+        "cta": "Practice Now"
       },
       "review": {
         "title": "Review",
-        "description": "Spaced repetition review session"
+        "description": "Spaced repetition review session",
+        "cta": "Start Review"
       },
       "exam": {
         "title": "Exam",
-        "description": "Timed exam simulation"
+        "description": "Timed exam simulation",
+        "cta": "Take Exam"
       }
     }
   },

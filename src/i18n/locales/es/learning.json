@@ -10,6 +10,15 @@
       "mastered": "Dominado",
       "description": "{{count}} preguntas en este nivel"
     },
+    "dueToday": "Pendientes Hoy",
+    "mastered": "Dominado",
+    "learning": "Aprendiendo",
+    "startReview": "Iniciar Sesión de Repaso",
+    "allCaughtUp": "¡Al día! No hay repasos pendientes.",
+    "startLearning": "¡Empieza a practicar para ver tu progreso de aprendizaje!",
+    "startPracticing": "Empieza a practicar para ver el progreso por categoría",
+    "due": "pendientes",
+    "questions": "preguntas",
     "weakAreas": {
       "title": "Áreas Débiles",
       "subtitle": "Temas que necesitan más práctica",
@@ -21,6 +30,7 @@
       "subtitle": "Tarjetas pendientes de repaso",
       "dueToday": "Pendientes Hoy",
       "newCards": "Tarjetas Nuevas",
+      "dueCards": "Tarjetas Pendientes",
       "reviewNow": "Repasar Ahora",
       "noReviews": "No hay repasos pendientes hoy"
     },
@@ -28,19 +38,23 @@
       "title": "Modos de Estudio",
       "learn": {
         "title": "Aprender",
-        "description": "Aprendizaje guiado con pistas y comentarios"
+        "description": "Aprendizaje guiado con pistas y comentarios",
+        "cta": "Empezar a Aprender"
       },
       "practice": {
         "title": "Practicar",
-        "description": "Práctica libre con repetición espaciada"
+        "description": "Práctica libre con repetición espaciada",
+        "cta": "Practicar Ahora"
       },
       "review": {
         "title": "Repasar",
-        "description": "Sesión de repaso con repetición espaciada"
+        "description": "Sesión de repaso con repetición espaciada",
+        "cta": "Empezar Repaso"
       },
       "exam": {
         "title": "Examen",
-        "description": "Simulación de examen cronometrado"
+        "description": "Simulación de examen cronometrado",
+        "cta": "Iniciar Examen"
       }
     }
   },
@@ -62,7 +76,7 @@
       "subtitle": "Has terminado tu sesión de repaso",
       "cardsReviewed": "Tarjetas Repasadas",
       "accuracy": "Precisión",
-      "timeSpent": "Tiempo Employado",
+      "timeSpent": "Tiempo Empleado",
       "continue": "Continuar",
       "backToDashboard": "Volver al Panel"
     }
@@ -73,7 +87,7 @@
     "hard": "Difícil",
     "good": "Bien",
     "easy": "Fácil",
-    "againHint": " blackout completo",
+    "againHint": "Blackout completo",
     "hardHint": "Incorrecto pero recordé",
     "goodHint": "Correcto con esfuerzo",
     "easyHint": "Recordé perfectamente"

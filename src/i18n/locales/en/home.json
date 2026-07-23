@@ -4,6 +4,14 @@
     "subtitle": "Master your technical skills with project-based challenges",
     "modes": {
       "title": "Choose Your Mode",
+      "learn": {
+        "title": "Learn",
+        "description": "Guided learning with mastery tracking and spaced repetition",
+        "cta": "Open Learning Dashboard",
+        "feature1": "Track mastery per topic",
+        "feature2": "Spaced repetition reviews",
+        "feature3": "Identify weak areas"
+      },
       "project": {
         "title": "By Project",
         "description": "Practice questions based on your portfolio projects",

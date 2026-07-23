@@ -1,0 +1,576 @@
+[
+  {
+    "id": "hb-4",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "i18n with react-i18next Setup",
+    "titleEs": "Configuración de i18n con react-i18next",
+    "descriptionEn": "Set up react-i18next with language detection, namespace support, and lazy loading of translations.",
+    "descriptionEs": "Configura react-i18next con detección de idioma, soporte de namespaces, y carga lazy de traducciones.",
+    "hintsEn": [
+      "Use i18next-browser-languagedetector for auto detection",
+      "Split translations by namespace (common, home, etc.) for lazy loading",
+      "Use Suspense for async loading"
+    ],
+    "hintsEs": [
+      "Usa i18next-browser-languagedetector para auto detección",
+      "Divide traducciones por namespace (common, home, etc.) para lazy loading",
+      "Usa Suspense para carga asíncrona"
+    ],
+    "solutionEn": "i18n.init({ fallbackLng: 'en', ns: ['common', 'home'], defaultNS: 'common', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' }, detection: { order: ['localStorage', 'navigator'] } }). Components: const { t } = useTranslation('home'). Lazy: const Home = lazy(() => import('./Home')) wrapped in <Suspense fallback={<Loading/>}>.",
+    "solutionEs": "i18n.init con namespaces, backend de carga de JSON files, detector de localStorage/navigator, hooks useTranslation por namespace, lazy load de páginas.",
+    "explanationEn": "Namespaces allow code splitting: the Home page only loads home.json, not the entire translation bundle. localStorage detection persists the user's choice across sessions.",
+    "explanationEs": "Los namespaces permiten code splitting: la página Home solo carga home.json, no todo el bundle de traducciones. La detección por localStorage persiste la elección del usuario entre sesiones.",
+    "starterCode": "import i18n from 'i18next' // Tu configuración aquí",
+    "tags": [
+      "i18n",
+      "react",
+      "localization"
+    ],
+    "resources": [
+      {
+        "title": "react-i18next docs",
+        "url": "https://react.i18next.com/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-5",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "ICU MessageFormat for Plurals and Dates",
+    "titleEs": "ICU MessageFormat para Plurales y Fechas",
+    "descriptionEn": "Use ICU MessageFormat for proper pluralization and date/number formatting in your translations.",
+    "descriptionEs": "Usa ICU MessageFormat para pluralización correcta y formateo de fechas/números en tus traducciones.",
+    "hintsEn": [
+      "i18next-icu plugin adds ICU support",
+      "{count, plural, one {# item} other {# items}}",
+      "Use Intl.DateTimeFormat for locale-aware dates"
+    ],
+    "hintsEs": [
+      "El plugin i18next-icu añade soporte ICU",
+      "{count, plural, one {# item} other {# items}}",
+      "Usa Intl.DateTimeFormat para fechas con locale"
+    ],
+    "solutionEn": "i18next.use(ICU).init({...}). Translations: {items: '{count, plural, one {# item} other {# items}}', date: '{date, date, medium}'}. Component: t('items', { count: 5 }) returns '5 items'. For dates: new Intl.DateTimeFormat('es-ES', { dateStyle: 'long' }).format(date) returns '15 de julio de 2026'.",
+    "solutionEs": "Plugin i18next-icu, traducciones ICU con plurales y formateo, Intl.DateTimeFormat para fechas con locale.",
+    "explanationEn": "Plurals vary by language: English has 2 forms (one/other), Russian has 4, Arabic has 6. ICU handles all cases. DateTimeFormat respects locale conventions (e.g., MM/DD/YYYY vs DD/MM/YYYY).",
+    "explanationEs": "Los plurales varían por idioma: inglés tiene 2 formas, ruso 4, árabe 6. ICU maneja todos los casos. DateTimeFormat respeta convenciones de locale.",
+    "tags": [
+      "i18n",
+      "icu",
+      "formatting"
+    ],
+    "resources": [
+      {
+        "title": "ICU MessageFormat",
+        "url": "https://formatjs.io/docs/message-format/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-6",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "titleEn": "Translation Workflow with External Service",
+    "titleEs": "Flujo de Traducción con Servicio Externo",
+    "descriptionEn": "Design a translation workflow using Crowdin or Lokalise: sync source strings, translators work in the platform, CI pulls translations.",
+    "descriptionEs": "Diseña un flujo de traducción usando Crowdin o Lokalise: sincroniza strings fuente, traductores trabajan en la plataforma, CI pull de traducciones.",
+    "hintsEn": [
+      "Use i18next-parser to extract strings from source code",
+      "Push source files to Crowdin, pull translated files",
+      "CI runs on every push to verify translations are up to date"
+    ],
+    "hintsEs": [
+      "Usa i18next-parser para extraer strings del código",
+      "Push source files a Crowdin, pull translated files",
+      "CI corre en cada push para verificar traducciones actualizadas"
+    ],
+    "solutionEn": "i18next-parser extracts all t('key') calls into source.json. Crowdin CLI: crowdin push sources uploads source.json, crowdin pull downloads translated files. CI: GitHub Action runs on push, runs crowdin pull, commits if changed. Translators use Crowdin web UI. Pseudolocale (en-XA) for testing UI overflow.",
+    "solutionEs": "i18next-parser extrae keys, Crowdin CLI para push/pull, CI automatiza, translators en web UI, pseudolocale en-XA para testing.",
+    "explanationEn": "Manual translation is error-prone: missing keys, stale translations, no plural support. A translation management platform handles versioning, translator roles, glossary, and machine translation fallback.",
+    "explanationEs": "La traducción manual es propensa a errores: keys faltantes, traducciones obsoletas, sin plurales. Una plataforma de gestión maneja versionado, roles, glosario, y fallback de machine translation.",
+    "tags": [
+      "i18n",
+      "workflow",
+      "ci"
+    ],
+    "resources": [
+      {
+        "title": "Crowdin CLI",
+        "url": "https://developer.crowdin.com/cli-tool/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-7",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Direction-Aware CSS for RTL Languages",
+    "titleEs": "CSS Direccional para Idiomas RTL",
+    "descriptionEn": "Make your CSS work for RTL languages (Arabic, Hebrew) using logical properties and the dir attribute.",
+    "descriptionEs": "Haz que tu CSS funcione para idiomas RTL (árabe, hebreo) usando propiedades lógicas y el atributo dir.",
+    "hintsEn": [
+      "Use margin-inline-start instead of margin-left",
+      "Use padding-inline-end instead of padding-right",
+      "Set dir=\"rtl\" on <html> element"
+    ],
+    "hintsEs": [
+      "Usa margin-inline-start en lugar de margin-left",
+      "Usa padding-inline-end en lugar de padding-right",
+      "Establece dir=\"rtl\" en el elemento <html>"
+    ],
+    "solutionEn": "Set dir attribute on html: <html dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>. CSS uses logical properties: .card { margin-inline-start: 1rem; padding-inline-end: 0.5rem; } instead of margin-left/padding-right. Flexbox: flex-direction: row automatically reverses in RTL. For icons that should not mirror (like charts), use [dir=\"rtl\"] .chart { transform: scaleX(-1) } only when needed.",
+    "solutionEs": "Atributo dir en html, propiedades lógicas (margin-inline-start vs margin-left), flexbox revierte automáticamente en RTL, excepciones para icons que no deben mirror.",
+    "explanationEn": "Logical properties are designed for internationalization: they map to physical properties based on writing direction. This eliminates the need for separate RTL stylesheets for layout.",
+    "explanationEs": "Las propiedades lógicas están diseñadas para internacionalización: se mapean a propiedades físicas según la dirección de escritura. Esto elimina la necesidad de stylesheets RTL separados para layout.",
+    "tags": [
+      "css",
+      "rtl",
+      "i18n"
+    ],
+    "resources": [
+      {
+        "title": "CSS Logical Properties",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-8",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Locale-Aware Number and Currency Formatting",
+    "titleEs": "Formateo de Números y Moneda con Locale",
+    "descriptionEn": "Format numbers, currencies, and percentages correctly for different locales using Intl.NumberFormat.",
+    "descriptionEs": "Formatea números, monedas y porcentajes correctamente para diferentes locales usando Intl.NumberFormat.",
+    "hintsEn": [
+      "Intl.NumberFormat is built-in, no library needed",
+      "Different separators: 1,234.56 (en) vs 1.234,56 (es) vs 1 234,56 (fr)",
+      "Currency goes BEFORE or AFTER the number depending on locale"
+    ],
+    "hintsEs": [
+      "Intl.NumberFormat está integrado, no requiere librería",
+      "Diferentes separadores: 1,234.56 (en) vs 1.234,56 (es) vs 1 234,56 (fr)",
+      "La moneda va ANTES o DESPUÉS del número según el locale"
+    ],
+    "solutionEn": "new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(99.99) returns '$99.99'. new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(99.99) returns '99,99 €'. Percentage: { style: 'percent' } for 0.85 returns '85 %' in fr-FR.",
+    "solutionEs": "Intl.NumberFormat con style: 'currency' / 'percent', locale determina separadores y posición de la moneda.",
+    "explanationEn": "Currency display is highly locale-dependent: $99.99 vs 99,99 € vs ¥100. Always use Intl.NumberFormat instead of manual string concatenation.",
+    "explanationEs": "El display de moneda es muy dependiente del locale: $99.99 vs 99,99 € vs ¥100. Siempre usa Intl.NumberFormat en lugar de concatenación manual de strings.",
+    "starterCode": "// Tu formateador de moneda aquí",
+    "tags": [
+      "i18n",
+      "formatting",
+      "currency"
+    ],
+    "resources": [
+      {
+        "title": "Intl.NumberFormat",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-9",
+    "slug": "hermit-bar",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Framer Motion Page Transitions",
+    "titleEs": "Transiciones de Página con Framer Motion",
+    "descriptionEn": "Create smooth page transitions using Framer Motion: enter, exit, layout animations, and shared element transitions.",
+    "descriptionEs": "Crea transiciones de página suaves con Framer Motion: enter, exit, animaciones de layout, y shared element transitions.",
+    "hintsEn": [
+      "AnimatePresence handles exit animations",
+      "Use mode='wait' for sequential transitions",
+      "LayoutGroup for coordinated layout animations"
+    ],
+    "hintsEs": [
+      "AnimatePresence maneja animaciones de exit",
+      "Usa mode='wait' para transiciones secuenciales",
+      "LayoutGroup para animaciones de layout coordinadas"
+    ],
+    "solutionEn": "Wrap routes in AnimatePresence mode='wait'. Each page wrapped in motion.div with initial={{ opacity: 0, y: 20 }}, animate={{ opacity: 1, y: 0 }}, exit={{ opacity: 0, y: -20 }}, transition={{ duration: 0.3 }}. For shared element transitions: layoutId prop on motion.div in both source and target. LayoutGroup for lists: items animate position when added/removed.",
+    "solutionEs": "AnimatePresence con mode='wait', motion.div con initial/animate/exit, layoutId para shared element, LayoutGroup para listas.",
+    "explanationEn": "Framer Motion's declarative API makes page transitions simple. The key insight: you need AnimatePresence to handle exit animations, because by default the component unmounts immediately.",
+    "explanationEs": "La API declarativa de Framer Motion hace las transiciones simples. El insight clave: necesitas AnimatePresence para manejar animaciones de exit, porque por default el componente se desmonta inmediatamente.",
+    "starterCode": "import { motion } from 'framer-motion' // Tu componente animado aquí",
+    "tags": [
+      "animation",
+      "framer-motion",
+      "ux"
+    ],
+    "resources": [
+      {
+        "title": "Framer Motion docs",
+        "url": "https://www.framer.com/motion/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-10",
+    "slug": "hermit-bar",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Scroll-Triggered Animations",
+    "titleEs": "Animaciones Disparadas por Scroll",
+    "descriptionEn": "Implement scroll-triggered animations: parallax, fade-in on view, progress indicators, using Intersection Observer.",
+    "descriptionEs": "Implementa animaciones disparadas por scroll: parallax, fade-in al ver, indicadores de progreso, usando Intersection Observer.",
+    "hintsEn": [
+      "IntersectionObserver fires when element enters viewport",
+      "Use rootMargin to trigger before fully visible",
+      "Once-only animations: unobserve after first fire"
+    ],
+    "hintsEs": [
+      "IntersectionObserver dispara cuando el elemento entra al viewport",
+      "Usa rootMargin para disparar antes de ser totalmente visible",
+      "Animaciones one-time: unobserve tras el primer disparo"
+    ],
+    "solutionEn": "useInView hook from framer-motion: const ref = useRef(null); const inView = useInView(ref, { once: true, margin: '-100px' }); then motion.div ref={ref} initial={{ opacity: 0, y: 50 }} animate={inView ? { opacity: 1, y: 0 } : {}}. Scroll progress: window.addEventListener('scroll', () => setProgress(window.scrollY / (document.body.scrollHeight - window.innerHeight))).",
+    "solutionEs": "useInView hook de framer-motion con once:true, margin para trigger anticipado, scroll progress con window event.",
+    "explanationEn": "IntersectionObserver is much more efficient than scroll listeners: the browser handles the math, no throttling needed. Use rootMargin to trigger animations slightly before the element is fully visible for a snappier feel.",
+    "explanationEs": "IntersectionObserver es mucho más eficiente que scroll listeners: el navegador maneja los cálculos, no se necesita throttling. Usa rootMargin para disparar animaciones un poco antes de que el elemento sea totalmente visible para una sensación más ágil.",
+    "starterCode": "function FadeInOnScroll({ children }) { return <div>{children}</div>; }",
+    "tags": [
+      "animation",
+      "intersection-observer",
+      "ux"
+    ],
+    "resources": [
+      {
+        "title": "IntersectionObserver MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-11",
+    "slug": "hermit-bar",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Micro-Interactions and Hover States",
+    "titleEs": "Microinteracciones y Estados de Hover",
+    "descriptionEn": "Design micro-interactions: button press feedback, hover effects, loading states that feel responsive.",
+    "descriptionEs": "Diseña microinteracciones: feedback de button press, efectos de hover, estados de loading que se sienten responsivos.",
+    "hintsEn": [
+      "whileTap and whileHover for instant feedback",
+      "Optimistic UI: show result before server confirms",
+      "Use springs for natural motion (not linear easing)"
+    ],
+    "hintsEs": [
+      "whileTap y whileHover para feedback instantáneo",
+      "UI optimista: muestra resultado antes de confirmar del servidor",
+      "Usa springs para movimiento natural (no easing lineal)"
+    ],
+    "solutionEn": "motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 400, damping: 17 }}. Optimistic UI: useOptimistic hook updates state immediately, Server Action runs in background, rollback on error. Loading state: skeleton with subtle pulse animation, replace with real content on load.",
+    "solutionEs": "motion.button con whileHover/whileTap + spring transition, useOptimistic para feedback instantáneo, skeleton con pulse animation.",
+    "explanationEn": "Spring physics (stiffness, damping) make UI feel natural because they mimic real-world objects. Linear easing feels robotic. The key: response time under 100ms feels instant, anything over requires feedback.",
+    "explanationEs": "La física de springs (stiffness, damping) hace que la UI se sienta natural porque mimetiza objetos del mundo real. El easing lineal se siente robótico. La clave: tiempo de respuesta bajo 100ms se siente instantáneo.",
+    "tags": [
+      "animation",
+      "ux",
+      "microinteractions"
+    ],
+    "resources": [
+      {
+        "title": "Motion design principles",
+        "url": "https://material.io/design/motion/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "hb-12",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "SEO Meta Tags and Open Graph",
+    "titleEs": "Meta Tags SEO y Open Graph",
+    "descriptionEn": "Implement SEO meta tags: title, description, canonical, Open Graph, Twitter cards, structured data.",
+    "descriptionEs": "Implementa meta tags SEO: title, description, canonical, Open Graph, Twitter cards, structured data.",
+    "hintsEn": [
+      "Use react-helmet-async or Next.js metadata API",
+      "Each page needs unique title and description",
+      "Open Graph image should be 1200x630"
+    ],
+    "hintsEs": [
+      "Usa react-helmet-async o la API de metadata de Next.js",
+      "Cada página necesita title y description únicos",
+      "La imagen de Open Graph debe ser 1200x630"
+    ],
+    "solutionEn": "import { Helmet } from 'react-helmet-async'. <Helmet><title>Hermit Bar | Best Cocktails</title><meta name='description' content='...' /><link rel='canonical' href='https://hermit.bar/' /><meta property='og:title' content='Hermit Bar' /><meta property='og:image' content='/og.png' /><meta name='twitter:card' content='summary_large_image' /></Helmet>. JSON-LD structured data for LocalBusiness: <script type='application/ld+json'>{...}</script>.",
+    "solutionEs": "react-helmet-async con title/description/canonical/og:title/og:image/twitter:card, JSON-LD para LocalBusiness structured data.",
+    "explanationEn": "Social previews (Twitter, Facebook, LinkedIn) all use Open Graph. Without og: tags, links show as plain text with no image. The 1200x630 image is the standard size that displays well across all platforms.",
+    "explanationEs": "Los previews sociales (Twitter, Facebook, LinkedIn) todos usan Open Graph. Sin tags og:, los links se muestran como texto plano sin imagen. La imagen 1200x630 es el tamaño estándar que se ve bien en todas las plataformas.",
+    "starterCode": "import { Helmet } from 'react-helmet-async' // Tu componente SEO aquí",
+    "tags": [
+      "seo",
+      "meta",
+      "open-graph"
+    ],
+    "resources": [
+      {
+        "title": "Open Graph protocol",
+        "url": "https://ogp.me/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-13",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Structured Data with JSON-LD",
+    "titleEs": "Datos Estructurados con JSON-LD",
+    "descriptionEn": "Add JSON-LD structured data for a local business: name, address, hours, menu items, ratings.",
+    "descriptionEs": "Añade datos estructurados JSON-LD para un negocio local: nombre, dirección, horarios, items del menú, ratings.",
+    "hintsEn": [
+      "Use schema.org/Restaurant or schema.org/BarOrPub for bars",
+      "Validate with Google's Rich Results Test",
+      "Include aggregateRating for stars in search results"
+    ],
+    "hintsEs": [
+      "Usa schema.org/Restaurant o schema.org/BarOrPub para bares",
+      "Valida con Google Rich Results Test",
+      "Incluye aggregateRating para estrellas en resultados"
+    ],
+    "solutionEn": "<script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BarOrPub', name: 'Hermit Bar', address: { '@type': 'PostalAddress', streetAddress: '...', addressLocality: '...', addressCountry: 'MX' }, telephone: '+52...', openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday'], opens: '17:00', closes: '02:00' }], aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '250' } }) }} />.",
+    "solutionEs": "Script type application/ld+json con @context schema.org, @type BarOrPub, address, telephone, openingHoursSpecification, aggregateRating.",
+    "explanationEn": "Structured data helps Google display rich results (stars, hours, menu) directly in search. For local businesses, this significantly increases click-through rate.",
+    "explanationEs": "Los datos estructurados ayudan a Google a mostrar rich results (estrellas, horarios, menú) directamente en la búsqueda. Para negocios locales, esto aumenta significativamente el click-through rate.",
+    "tags": [
+      "seo",
+      "structured-data",
+      "json-ld"
+    ],
+    "resources": [
+      {
+        "title": "Schema.org Restaurant",
+        "url": "https://schema.org/Restaurant",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-14",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Sitemap and Robots.txt Generation",
+    "titleEs": "Generación de Sitemap y Robots.txt",
+    "descriptionEn": "Generate dynamic sitemap.xml and robots.txt for your SPA. Submit to Google Search Console.",
+    "descriptionEs": "Genera sitemap.xml y robots.txt dinámicos para tu SPA. Envía a Google Search Console.",
+    "hintsEn": [
+      "Use sitemap.js or @nuxtjs/sitemap for dynamic generation",
+      "Include lastmod for change frequency hints",
+      "Disallow /admin and /api in robots.txt"
+    ],
+    "hintsEs": [
+      "Usa sitemap.js o @nuxtjs/sitemap para generación dinámica",
+      "Incluye lastmod para hints de frecuencia de cambio",
+      "Disallow /admin y /api en robots.txt"
+    ],
+    "solutionEn": "Express endpoint: app.get('/sitemap.xml', async (req, res) => { const urls = await getAllUrls(); res.set('Content-Type', 'application/xml'); res.send(generateSitemap(urls)); }); generateSitemap builds XML with each URL, lastmod, changefreq, priority. robots.txt: User-agent: *, Allow: /, Disallow: /admin, Sitemap: https://hermit.bar/sitemap.xml.",
+    "solutionEs": "Express endpoint para sitemap.xml con lastmod/changefreq/priority, robots.txt con User-agent, Allow/Disallow, Sitemap URL.",
+    "explanationEn": "Sitemaps help search engines discover all your pages. For an SPA, generate the sitemap at build time or via API. The robots.txt Sitemap directive tells crawlers where to find it.",
+    "explanationEs": "Los sitemaps ayudan a los motores de búsqueda a descubrir todas tus páginas. Para un SPA, genera el sitemap en build time o vía API. La directiva Sitemap en robots.txt les dice dónde encontrarlo.",
+    "tags": [
+      "seo",
+      "sitemap",
+      "robots"
+    ],
+    "resources": [
+      {
+        "title": "Google Search Console",
+        "url": "https://search.google.com/search-console",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "hb-15",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Lighthouse Performance Optimization",
+    "titleEs": "Optimización de Performance con Lighthouse",
+    "descriptionEn": "Optimize a landing page to score 95+ on Lighthouse: Core Web Vitals, image optimization, code splitting.",
+    "descriptionEs": "Optimiza una landing page para sacar 95+ en Lighthouse: Core Web Vitals, optimización de imágenes, code splitting.",
+    "hintsEn": [
+      "LCP (Largest Contentful Paint) < 2.5s",
+      "INP (Interaction to Next Paint) < 200ms",
+      "CLS (Cumulative Layout Shift) < 0.1",
+      "Use next/image, font-display: swap, defer non-critical CSS"
+    ],
+    "hintsEs": [
+      "LCP < 2.5s, INP < 200ms, CLS < 0.1",
+      "Usa next/image, font-display: swap, defer non-critical CSS"
+    ],
+    "solutionEn": "1) Image: next/image with priority on hero, WebP format, explicit width/height. 2) Font: font-display: swap, preload critical font. 3) JS: dynamic import for below-the-fold components, defer non-critical scripts. 4) CSS: extract critical CSS inline, defer rest. 5) LCP element: preconnect to image CDN, preload LCP image. 6) Layout: reserve space for ads/embeds to prevent CLS.",
+    "solutionEs": "next/image con priority+WebP, font-display: swap + preload, dynamic import below-fold, critical CSS inline, preconnect CDN, reservar espacio para evitar CLS.",
+    "explanationEn": "Lighthouse simulates slow 4G and throttled CPU. What feels fast in dev feels slow to real users. Measure with real-user monitoring (RUM) tools like web-vitals, not just lab tests.",
+    "explanationEs": "Lighthouse simula 4G lento y CPU throttled. Lo que se siente rápido en dev se siente lento para usuarios reales. Mide con herramientas RUM como web-vitals, no solo tests de laboratorio.",
+    "tags": [
+      "performance",
+      "lighthouse",
+      "core-web-vitals"
+    ],
+    "resources": [
+      {
+        "title": "web.dev Core Web Vitals",
+        "url": "https://web.dev/vitals/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "hb-16",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "titleEn": "Landing Page Conversion Best Practices",
+    "titleEs": "Mejores Prácticas de Conversión en Landing Page",
+    "descriptionEn": "Design a high-converting landing page: hero with clear value prop, social proof, CTAs, friction reduction.",
+    "descriptionEs": "Diseña una landing page de alta conversión: hero con propuesta de valor clara, prueba social, CTAs, reducción de fricción.",
+    "hintsEn": [
+      "Hero should communicate value in <5 seconds",
+      "Social proof above the fold (logos, ratings, testimonials)",
+      "One primary CTA, one secondary CTA"
+    ],
+    "hintsEs": [
+      "El hero debe comunicar el valor en <5 segundos",
+      "Prueba social above the fold (logos, ratings, testimonios)",
+      "Un CTA principal, un CTA secundario"
+    ],
+    "solutionEn": "Structure: 1) Hero: headline (value prop) + subhead (specifics) + primary CTA + hero image/video. 2) Social proof bar: logos of notable customers. 3) Features: 3-4 key benefits with icons. 4) Testimonials: real quotes with photos. 5) Pricing/Menu. 6) FAQ. 7) Final CTA. Above the fold: <2 seconds load, no scroll needed for value prop.",
+    "solutionEs": "Hero con value prop + CTA + visual, social proof bar, 3-4 features, testimonials con fotos, pricing/menu, FAQ, CTA final. Above the fold < 2s.",
+    "explanationEn": "Conversion rate optimization is iterative: launch with hypothesis, measure, A/B test variants. The biggest gains usually come from clearer value prop and removing friction (form fields, steps).",
+    "explanationEs": "La optimización de conversión es iterativa: lanza con hipótesis, mide, A/B testea variantes. Las mayores ganancias suelen venir de propuesta de valor más clara y reducir fricción.",
+    "tags": [
+      "ux",
+      "conversion",
+      "landing-page"
+    ],
+    "resources": [
+      {
+        "title": "GoodUI patterns",
+        "url": "https://goodui.org/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "hb-17",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Image Gallery with Lazy Loading",
+    "titleEs": "Galería de Imágenes con Lazy Loading",
+    "descriptionEn": "Build an image gallery with: lazy loading via IntersectionObserver, blur-up placeholder, responsive grid, lightbox.",
+    "descriptionEs": "Construye una galería de imágenes con: lazy loading vía IntersectionObserver, placeholder blur-up, grid responsive, lightbox.",
+    "hintsEn": [
+      "Generate blur placeholder (LQIP) at upload time with sharp",
+      "Use srcSet for responsive images",
+      "Lock body scroll when lightbox is open"
+    ],
+    "hintsEs": [
+      "Genera placeholder blur (LQIP) al subir con sharp",
+      "Usa srcSet para imágenes responsive",
+      "Bloquea scroll del body cuando el lightbox está abierto"
+    ],
+    "solutionEn": "useLazyImage hook: const [loaded, setLoaded] = useState(false); useEffect(() => { const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setLoaded(true); obs.disconnect(); } }); if (ref.current) obs.observe(ref.current); return () => obs.disconnect(); }, []); return { ref, loaded }. Image: <img src={loaded ? src : blurDataURL} loading='lazy' decoding='async' />. Lightbox: useEffect toggling document.body.style.overflow.",
+    "solutionEs": "useLazyImage con IntersectionObserver, swap src a blurDataURL, loading=lazy + decoding=async, lightbox con body.style.overflow.",
+    "explanationEn": "Lazy loading is critical for galleries with many images: only download what's visible. The blur placeholder (LQIP) prevents layout shift and gives an instant visual hint.",
+    "explanationEs": "Lazy loading es crítico para galerías con muchas imágenes: solo descarga lo visible. El placeholder blur (LQIP) previene layout shift y da una pista visual instantánea.",
+    "tags": [
+      "images",
+      "performance",
+      "gallery"
+    ],
+    "resources": [
+      {
+        "title": "web.dev LQIP",
+        "url": "https://web.dev/articles/lcp-lazy-loading",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "hb-18",
+    "slug": "hermit-bar",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Menu Page with Category Filters",
+    "titleEs": "Página de Menú con Filtros de Categoría",
+    "descriptionEn": "Build a restaurant/bar menu page with category filters, search, dietary tags (vegan, gluten-free), and prices.",
+    "descriptionEs": "Construye una página de menú de restaurante/bar con filtros de categoría, búsqueda, tags dietarios (vegano, sin gluten), y precios.",
+    "hintsEn": [
+      "Use URL query params for shareable filtered views",
+      "Virtualize long lists to avoid DOM bloat",
+      "Lazy load images below the fold"
+    ],
+    "hintsEs": [
+      "Usa query params de URL para vistas filtradas compartibles",
+      "Virtualiza listas largas para evitar bloat de DOM",
+      "Lazy load de imágenes below the fold"
+    ],
+    "solutionEn": "useSearchParams from react-router: const [searchParams, setSearchParams] = useSearchParams(); const activeCategory = searchParams.get('category') || 'all'; Filtering: const filtered = items.filter(item => activeCategory === 'all' || item.category === activeCategory). Search: const [query, setQuery] = useState(''); debounced search. URL: onCategoryChange(c) => setSearchParams({ category: c }).",
+    "solutionEs": "useSearchParams para filtros en URL, setSearchParams actualiza la URL, debounced search input, virtualización para listas largas.",
+    "explanationEn": "URL-based filters are essential for shareable views and browser history. SEO bonus: search engines can index category-specific pages. Virtualization prevents performance issues with hundreds of items.",
+    "explanationEs": "Los filtros basados en URL son esenciales para vistas compartibles e historial del navegador. Bonus SEO: los motores de búsqueda pueden indexar páginas por categoría. La virtualización previene problemas de performance con cientos de items.",
+    "starterCode": "function MenuPage() { return <div>Menu</div>; }",
+    "tags": [
+      "ux",
+      "filter",
+      "menu"
+    ],
+    "resources": [
+      {
+        "title": "URL-based state with React Router",
+        "url": "https://reactrouter.com/en/main/hooks/use-search-params",
+        "type": "documentation"
+      }
+    ]
+  }
+]

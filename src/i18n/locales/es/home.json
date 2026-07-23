@@ -4,6 +4,14 @@
     "subtitle": "Domina tus habilidades técnicas con desafíos basados en proyectos",
     "modes": {
       "title": "Elige Tu Modo",
+      "learn": {
+        "title": "Aprender",
+        "description": "Aprendizaje guiado con seguimiento de dominio y repetición espaciada",
+        "cta": "Abrir Panel de Aprendizaje",
+        "feature1": "Sigue el dominio por tema",
+        "feature2": "Repasos con repetición espaciada",
+        "feature3": "Identifica áreas débiles"
+      },
       "project": {
         "title": "Por Proyecto",
         "description": "Practica preguntas basadas en tus proyectos del portafolio",

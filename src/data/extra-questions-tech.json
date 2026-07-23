@@ -1,0 +1,1338 @@
+[
+  {
+    "id": "rh-4",
+    "slug": "react-hooks",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "useState Basic Counter",
+    "titleEs": "useState - Contador Básico",
+    "descriptionEn": "Build a simple counter component using useState with increment, decrement, and reset.",
+    "descriptionEs": "Construye un componente contador con useState con incremento, decremento, y reset.",
+    "hintsEn": [
+      "useState returns [value, setValue]",
+      "Always use the setter function, never mutate the value directly",
+      "Multiple states: use useState multiple times or a single object"
+    ],
+    "hintsEs": [
+      "useState retorna [value, setValue]",
+      "Siempre usa la función setter, nunca mutes el valor directamente",
+      "Múltiples estados: usa useState varias veces o un solo objeto"
+    ],
+    "solutionEn": "function Counter() { const [count, setCount] = useState(0); return (<div><p>{count}</p><button onClick={() => setCount(count + 1)}>+</button><button onClick={() => setCount(count - 1)}>-</button><button onClick={() => setCount(0)}>Reset</button></div>); }",
+    "solutionEs": "useState(0), setCount con nuevas funciones para cada acción.",
+    "explanationEn": "useState is the most basic React hook. The setter function is async: calling it with the same value will not trigger a re-render. For functional updates (when new state depends on old), use setCount(c => c + 1) instead of setCount(count + 1).",
+    "explanationEs": "useState es el hook más básico de React. La función setter es async: llamarla con el mismo valor no dispara re-render. Para updates funcionales (cuando el nuevo estado depende del anterior), usa setCount(c => c + 1).",
+    "starterCode": "function Counter() { return <div>0</div>; }",
+    "tags": [
+      "react",
+      "hooks",
+      "useState"
+    ],
+    "resources": [
+      {
+        "title": "React useState",
+        "url": "https://react.dev/reference/react/useState",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-5",
+    "slug": "react-hooks",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "useEffect for Side Effects",
+    "titleEs": "useEffect para Efectos Secundarios",
+    "descriptionEn": "Use useEffect to fetch data when a component mounts and cleanup on unmount.",
+    "descriptionEs": "Usa useEffect para hacer fetch de datos cuando un componente se monta y limpiar al desmontar.",
+    "hintsEn": [
+      "Empty dependency array [] runs once on mount",
+      "Return a cleanup function for subscriptions/timers",
+      "Missing deps cause stale closures"
+    ],
+    "hintsEs": [
+      "Array de dependencias vacío [] corre una vez al montar",
+      "Retorna una función de cleanup para subscriptions/timers",
+      "Dependencias faltantes causan closures obsoletos"
+    ],
+    "solutionEn": "useEffect(() => { const controller = new AbortController(); fetch('/api/data', { signal: controller.signal }).then(r => r.json()).then(setData); return () => controller.abort(); }, []);",
+    "solutionEs": "useEffect con AbortController para cleanup, array vacío para mount-once.",
+    "explanationEn": "useEffect runs after render. Always include the dependency array or use ESLint exhaustive-deps rule. Cleanup prevents memory leaks and race conditions.",
+    "explanationEs": "useEffect corre después del render. Siempre incluye el array de dependencias o usa la regla exhaustive-deps de ESLint. El cleanup previene memory leaks y race conditions.",
+    "tags": [
+      "react",
+      "hooks",
+      "useEffect"
+    ],
+    "resources": [
+      {
+        "title": "React useEffect",
+        "url": "https://react.dev/reference/react/useEffect",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-6",
+    "slug": "react-hooks",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "useRef for DOM Access",
+    "titleEs": "useRef para Acceso al DOM",
+    "descriptionEn": "Use useRef to access a DOM element directly, e.g., to focus an input on mount.",
+    "descriptionEs": "Usa useRef para acceder directamente a un elemento del DOM, ej., para hacer focus a un input al montar.",
+    "hintsEn": [
+      "useRef returns a mutable object: { current: T }",
+      "Ref updates do not trigger re-renders",
+      "Use forwardRef to pass refs to child components"
+    ],
+    "hintsEs": [
+      "useRef retorna un objeto mutable: { current: T }",
+      "Las updates de ref no disparan re-renders",
+      "Usa forwardRef para pasar refs a componentes hijos"
+    ],
+    "solutionEn": "const inputRef = useRef<HTMLInputElement>(null); useEffect(() => { inputRef.current?.focus(); }, []); return <input ref={inputRef} />;",
+    "solutionEs": "useRef tipado como HTMLInputElement, focus en useEffect al mount.",
+    "explanationEn": "useRef is like a 'box' you can put anything in. It persists across renders without triggering them. Perfect for: DOM refs, mutable values like timers, storing previous values.",
+    "explanationEs": "useRef es como una 'caja' donde puedes poner cualquier cosa. Persiste entre renders sin dispararlos. Perfecto para: refs de DOM, valores mutables como timers, guardar valores previos.",
+    "tags": [
+      "react",
+      "hooks",
+      "useRef"
+    ],
+    "resources": [
+      {
+        "title": "React useRef",
+        "url": "https://react.dev/reference/react/useRef",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-7",
+    "slug": "react-hooks",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "useMemo for Expensive Calculations",
+    "titleEs": "useMemo para Cálculos Caros",
+    "descriptionEn": "Use useMemo to memoize an expensive filter/sort operation that depends on props.",
+    "descriptionEs": "Usa useMemo para memoizar una operación cara de filter/sort que depende de props.",
+    "hintsEn": [
+      "useMemo(fn, deps) recomputes only when deps change",
+      "Overusing useMemo can hurt performance (cache overhead)",
+      "Prefer useMemo for expensive pure computations"
+    ],
+    "hintsEs": [
+      "useMemo(fn, deps) recomputa solo cuando cambian las deps",
+      "Usar useMemo en exceso puede dañar el performance (overhead de cache)",
+      "Prefiere useMemo para cálculos puros caros"
+    ],
+    "solutionEn": "const filtered = useMemo(() => items.filter(i => i.name.includes(query)).sort((a, b) => a.price - b.price), [items, query]);",
+    "solutionEs": "useMemo con deps [items, query] que solo recomputa cuando alguna cambia.",
+    "explanationEn": "useMemo runs the function during render and caches the result. It's a performance optimization, not a semantic guarantee. React may discard the cache (e.g., off-screen components).",
+    "explanationEs": "useMemo corre la función durante el render y cachea el resultado. Es una optimización de performance, no una garantía semántica. React puede descartar el cache (ej. componentes fuera de pantalla).",
+    "tags": [
+      "react",
+      "hooks",
+      "useMemo",
+      "performance"
+    ],
+    "resources": [
+      {
+        "title": "React useMemo",
+        "url": "https://react.dev/reference/react/useMemo",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-8",
+    "slug": "react-hooks",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "useCallback for Stable Function References",
+    "titleEs": "useCallback para Referencias Estables de Funciones",
+    "descriptionEn": "Use useCallback to memoize a callback passed to a memoized child component.",
+    "descriptionEs": "Usa useCallback para memoizar un callback pasado a un componente hijo memoizado.",
+    "hintsEn": [
+      "useCallback(fn, deps) returns a memoized function",
+      "Useful when passing callbacks to React.memo'd children",
+      "Don't use everywhere - it has overhead too"
+    ],
+    "hintsEs": [
+      "useCallback(fn, deps) retorna una función memoizada",
+      "Útil cuando pasas callbacks a componentes hijos con React.memo",
+      "No uses en todos lados - también tiene overhead"
+    ],
+    "solutionEn": "const handleClick = useCallback((id: string) => { setSelected(id); }, []); return <MemoizedChild onClick={handleClick} />;",
+    "solutionEs": "useCallback con deps [] para función que solo necesita id.",
+    "explanationEn": "useCallback returns the same function reference between renders if deps don't change. This prevents unnecessary re-renders of memoized child components that depend on the callback.",
+    "explanationEs": "useCallback retorna la misma referencia de función entre renders si las deps no cambian. Esto previene re-renders innecesarios de componentes hijos memoizados que dependen del callback.",
+    "tags": [
+      "react",
+      "hooks",
+      "useCallback"
+    ],
+    "resources": [
+      {
+        "title": "React useCallback",
+        "url": "https://react.dev/reference/react/useCallback",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-9",
+    "slug": "react-hooks",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Custom Hook for Data Fetching",
+    "titleEs": "Custom Hook para Fetch de Datos",
+    "descriptionEn": "Build a custom useFetch<T>(url) hook with loading, error, and refetch states.",
+    "descriptionEs": "Construye un custom hook useFetch<T>(url) con estados de loading, error, y refetch.",
+    "hintsEn": [
+      "Encapsulate fetch logic so components stay clean",
+      "Return an object: { data, loading, error, refetch }",
+      "Use AbortController for cleanup"
+    ],
+    "hintsEs": [
+      "Encapsula la lógica de fetch para mantener componentes limpios",
+      "Retorna un objeto: { data, loading, error, refetch }",
+      "Usa AbortController para cleanup"
+    ],
+    "solutionEn": "function useFetch<T>(url: string) { const [data, setData] = useState<T | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState<Error | null>(null); const fetchData = useCallback(async () => { setLoading(true); try { const r = await fetch(url); if (!r.ok) throw new Error(r.statusText); setData(await r.json()); } catch (e) { setError(e as Error); } finally { setLoading(false); } }, [url]); useEffect(() => { fetchData(); }, [fetchData]); return { data, loading, error, refetch: fetchData }; }",
+    "solutionEs": "useState para data/loading/error, useCallback para fetchData, useEffect con [fetchData], retorna { data, loading, error, refetch }.",
+    "explanationEn": "Custom hooks let you share stateful logic between components. The naming convention (use prefix) tells React and linters to apply the rules of hooks.",
+    "explanationEs": "Los custom hooks permiten compartir lógica stateful entre componentes. La convención de nombres (prefijo use) le dice a React y a los linters que apliquen las reglas de hooks.",
+    "tags": [
+      "react",
+      "hooks",
+      "custom-hooks"
+    ],
+    "resources": [
+      {
+        "title": "Reusing Logic with Custom Hooks",
+        "url": "https://react.dev/learn/reusing-logic-with-custom-hooks",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-10",
+    "slug": "react-hooks",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "useReducer for Complex State",
+    "titleEs": "useReducer para Estado Complejo",
+    "descriptionEn": "Use useReducer instead of useState when state transitions are complex or related.",
+    "descriptionEs": "Usa useReducer en lugar de useState cuando las transiciones de estado son complejas o relacionadas.",
+    "hintsEn": [
+      "useReducer takes (reducerFn, initialState)",
+      "Action types: discriminated unions with 'type' field",
+      "Dispatch is stable (no need for useCallback)"
+    ],
+    "hintsEs": [
+      "useReducer toma (reducerFn, initialState)",
+      "Tipos de action: unions discriminadas con campo 'type'",
+      "Dispatch es estable (no necesita useCallback)"
+    ],
+    "solutionEn": "type State = { count: number; step: number }; type Action = { type: 'inc' } | { type: 'dec' } | { type: 'setStep'; step: number }; function reducer(s: State, a: Action): State { switch (a.type) { case 'inc': return { ...s, count: s.count + s.step }; case 'dec': return { ...s, count: s.count - s.step }; case 'setStep': return { ...s, step: a.step }; } } const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 });",
+    "solutionEs": "Reducer con switch sobre action.type, useReducer con initial state, dispatch estable.",
+    "explanationEn": "useReducer is preferred over useState when: state has multiple sub-values, next state depends on previous, or state transitions are complex. It also makes testing easier (pure reducer function).",
+    "explanationEs": "useReducer es preferido sobre useState cuando: el estado tiene múltiples sub-valores, el siguiente estado depende del anterior, o las transiciones son complejas. También facilita el testing (función reducer pura).",
+    "tags": [
+      "react",
+      "hooks",
+      "useReducer"
+    ],
+    "resources": [
+      {
+        "title": "React useReducer",
+        "url": "https://react.dev/reference/react/useReducer",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-11",
+    "slug": "react-hooks",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Context API for Global State",
+    "titleEs": "Context API para Estado Global",
+    "descriptionEn": "Build a theme provider using Context: Provider component, useTheme hook, dark/light toggle.",
+    "descriptionEs": "Construye un theme provider usando Context: componente Provider, hook useTheme, toggle dark/light.",
+    "hintsEn": [
+      "Create context with default value",
+      "Provider wraps the app, useTheme reads the context",
+      "Split into state and dispatch contexts to avoid re-renders"
+    ],
+    "hintsEs": [
+      "Crea el context con un valor por default",
+      "Provider envuelve la app, useTheme lee el context",
+      "Divide en contexts de state y dispatch para evitar re-renders"
+    ],
+    "solutionEn": "type Theme = 'light' | 'dark'; const ThemeContext = createContext<{ theme: Theme; toggle: () => void } | null>(null); export function ThemeProvider({ children }: { children: ReactNode }) { const [theme, setTheme] = useState<Theme>('light'); const value = useMemo(() => ({ theme, toggle: () => setTheme(t => t === 'light' ? 'dark' : 'light') }), [theme]); return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>; } export function useTheme() { const ctx = useContext(ThemeContext); if (!ctx) throw new Error('useTheme must be used within ThemeProvider'); return ctx; }",
+    "solutionEs": "createContext con tipo null, Provider con useState y useMemo para value, useTheme hook con guard.",
+    "explanationEn": "Context is for low-frequency updates (theme, locale, auth). For high-frequency updates (form fields, animations), use a state management library. The Provider must wrap the component tree that uses the context.",
+    "explanationEs": "Context es para updates de baja frecuencia (theme, locale, auth). Para updates de alta frecuencia, usa una librería de state management. El Provider debe envolver el árbol de componentes que usa el context.",
+    "tags": [
+      "react",
+      "hooks",
+      "context"
+    ],
+    "resources": [
+      {
+        "title": "React Context",
+        "url": "https://react.dev/reference/react/createContext",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-12",
+    "slug": "react-hooks",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Error Boundary with componentDidCatch",
+    "titleEs": "Error Boundary con componentDidCatch",
+    "descriptionEn": "Create an Error Boundary class component that catches render errors in its children.",
+    "descriptionEs": "Crea un componente class Error Boundary que captura errores de render en sus hijos.",
+    "hintsEn": [
+      "Error Boundaries must be class components",
+      "static getDerivedStateFromError returns the new state",
+      "componentDidCatch logs the error"
+    ],
+    "hintsEs": [
+      "Los Error Boundaries deben ser class components",
+      "static getDerivedStateFromError retorna el nuevo state",
+      "componentDidCatch loggea el error"
+    ],
+    "solutionEn": "class ErrorBoundary extends React.Component<{ children: ReactNode }, { hasError: boolean }> { state = { hasError: false }; static getDerivedStateFromError() { return { hasError: true }; } componentDidCatch(error: Error, info: ErrorInfo) { console.error('Caught:', error, info); } render() { if (this.state.hasError) return <h1>Something went wrong.</h1>; return this.props.children; } }",
+    "solutionEs": "Class component, getDerivedStateFromError para state, componentDidCatch para logging, render con fallback UI.",
+    "explanationEn": "Error boundaries catch errors during render, in lifecycle methods, and in constructors. They do NOT catch errors in event handlers, async code, or server-side rendering. Use a separate try/catch for those.",
+    "explanationEs": "Los error boundaries capturan errores durante render, en lifecycle methods, y en constructors. NO capturan errores en event handlers, código async, o server-side rendering. Usa try/catch separados para esos.",
+    "tags": [
+      "react",
+      "errors",
+      "error-boundary"
+    ],
+    "resources": [
+      {
+        "title": "React Error Boundaries",
+        "url": "https://react.dev/reference/react/Component",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rh-13",
+    "slug": "react-hooks",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "useTransition for Non-Urgent Updates",
+    "titleEs": "useTransition para Updates No Urgentes",
+    "descriptionEn": "Use useTransition to mark a state update as non-urgent, keeping the UI responsive during heavy renders.",
+    "descriptionEs": "Usa useTransition para marcar un update de estado como no urgente, manteniendo la UI responsiva durante renders pesados.",
+    "hintsEn": [
+      "useTransition returns [isPending, startTransition]",
+      "isPending shows during the transition",
+      "Used with useDeferredValue for advanced patterns"
+    ],
+    "hintsEs": [
+      "useTransition retorna [isPending, startTransition]",
+      "isPending se muestra durante la transición",
+      "Usado con useDeferredValue para patrones avanzados"
+    ],
+    "solutionEn": "const [isPending, startTransition] = useTransition(); const [query, setQuery] = useState(''); const filtered = useMemo(() => bigList.filter(i => i.includes(query)), [query]); function handleChange(e) { setQuery(e.target.value); startTransition(() => { setBigList(newList); }); }",
+    "solutionEs": "useTransition con isPending + startTransition, setQuery urgente + setBigList no urgente.",
+    "explanationEn": "useTransition tells React that some state updates can be interrupted. Urgent updates (like typing) take priority; non-urgent ones (like filtering a list) can be deferred. This keeps the UI responsive.",
+    "explanationEs": "useTransition le dice a React que algunos updates pueden ser interrumpidos. Los updates urgentes (como typing) tienen prioridad; los no urgentes (como filtrar una lista) se difieren. Esto mantiene la UI responsiva.",
+    "tags": [
+      "react",
+      "hooks",
+      "performance",
+      "concurrent"
+    ],
+    "resources": [
+      {
+        "title": "React useTransition",
+        "url": "https://react.dev/reference/react/useTransition",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sm-4",
+    "slug": "state-management",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Zustand Store Basics",
+    "titleEs": "Zustand Store Básico",
+    "descriptionEn": "Create a Zustand store with state, actions, and a selector hook.",
+    "descriptionEs": "Crea un store de Zustand con state, actions, y un selector hook.",
+    "hintsEn": [
+      "create<T>()((set) => ({...})) for typed store",
+      "Components subscribe with selectors to avoid re-renders",
+      "Actions are functions inside the store that call set()"
+    ],
+    "hintsEs": [
+      "create<T>()((set) => ({...})) para store tipado",
+      "Los componentes se suscriben con selectors para evitar re-renders",
+      "Las actions son funciones dentro del store que llaman set()"
+    ],
+    "solutionEn": "type Store = { count: number; inc: () => void; reset: () => void }; const useStore = create<Store>()((set) => ({ count: 0, inc: () => set((s) => ({ count: s.count + 1 })), reset: () => set({ count: 0 }) })); function Counter() { const count = useStore((s) => s.count); const inc = useStore((s) => s.inc); return <button onClick={inc}>{count}</button>; }",
+    "solutionEs": "create<Store>() con set y get, selector por slice en componente.",
+    "explanationEn": "Zustand is a minimal state management library: no Provider needed, no boilerplate, uses selectors to subscribe to specific slices. Components only re-render when their selected slice changes.",
+    "explanationEs": "Zustand es una librería minimalista de state management: sin Provider, sin boilerplate, usa selectors para suscribirse a slices específicos. Los componentes solo re-renderizan cuando cambia su slice seleccionado.",
+    "tags": [
+      "zustand",
+      "state-management"
+    ],
+    "resources": [
+      {
+        "title": "Zustand docs",
+        "url": "https://zustand-demo.pmnd.rs/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sm-5",
+    "slug": "state-management",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Zustand Persist Middleware",
+    "titleEs": "Zustand Persist Middleware",
+    "descriptionEn": "Persist a Zustand store to localStorage so it survives page reloads.",
+    "descriptionEs": "Persiste un store de Zustand a localStorage para que sobreviva a recargas de página.",
+    "hintsEn": [
+      "Use the persist middleware: create()((set) => ({...}))",
+      "Configure storage (default: localStorage)",
+      "Use partialize to persist only specific fields"
+    ],
+    "hintsEs": [
+      "Usa el middleware persist: create()((set) => ({...}))",
+      "Configura storage (default: localStorage)",
+      "Usa partialize para persistir solo campos específicos"
+    ],
+    "solutionEn": "import { persist, createJSONStorage } from 'zustand/middleware'; const useStore = create<Store>()(persist((set) => ({ user: null, setUser: (u) => set({ user: u }) }), { name: 'app-store', storage: createJSONStorage(() => localStorage), partialize: (s) => ({ user: s.user }) }));",
+    "solutionEs": "persist middleware con name, storage de localStorage, partialize para solo user.",
+    "explanationEn": "The persist middleware automatically syncs the store to localStorage. Use partialize to control which fields are persisted (don't persist sensitive data like passwords).",
+    "explanationEs": "El middleware persist sincroniza automáticamente el store a localStorage. Usa partialize para controlar qué campos se persisten (no persistas datos sensibles como passwords).",
+    "tags": [
+      "zustand",
+      "state-management",
+      "persist"
+    ],
+    "resources": [
+      {
+        "title": "Zustand persist",
+        "url": "https://docs.pmnd.rs/zustand/integrations/persisting-store-data",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sm-6",
+    "slug": "state-management",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "React Query: useQuery Basics",
+    "titleEs": "React Query: useQuery Básico",
+    "descriptionEn": "Fetch data using React Query: useQuery with loading, error, and cache.",
+    "descriptionEs": "Fetch de datos con React Query: useQuery con loading, error, y cache.",
+    "hintsEn": [
+      "useQuery takes a queryKey (array) and queryFn",
+      "staleTime controls how long data is considered fresh",
+      "Returns { data, isLoading, error, refetch }"
+    ],
+    "hintsEs": [
+      "useQuery toma un queryKey (array) y queryFn",
+      "staleTime controla cuánto tiempo se considera fresh",
+      "Retorna { data, isLoading, error, refetch }"
+    ],
+    "solutionEn": "const { data, isLoading, error, refetch } = useQuery({ queryKey: ['users', userId], queryFn: () => fetch(`/api/users/${userId}`).then(r => r.json()), staleTime: 5 * 60 * 1000, });",
+    "solutionEs": "useQuery con queryKey jerárquico, queryFn, staleTime de 5 minutos.",
+    "explanationEn": "React Query handles caching, deduplication, background refetching, and retry automatically. The queryKey acts as a cache key: changing it refetches.",
+    "explanationEs": "React Query maneja cache, deduplicación, refetch en background, y retry automáticamente. El queryKey actúa como cache key: cambiándolo hace refetch.",
+    "tags": [
+      "react-query",
+      "data-fetching",
+      "cache"
+    ],
+    "resources": [
+      {
+        "title": "TanStack Query",
+        "url": "https://tanstack.com/query/latest",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sm-7",
+    "slug": "state-management",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "React Query: useMutation",
+    "titleEs": "React Query: useMutation",
+    "descriptionEn": "Use useMutation to create a new record, with optimistic update and rollback on error.",
+    "descriptionEs": "Usa useMutation para crear un nuevo registro, con update optimista y rollback en error.",
+    "hintsEn": [
+      "onMutate runs before mutation, ideal for optimistic updates",
+      "onError rolls back",
+      "onSuccess invalidates query to refetch",
+      "useQueryClient to access cache"
+    ],
+    "hintsEs": [
+      "onMutate corre antes de la mutation, ideal para updates optimistas",
+      "onError hace rollback",
+      "onSuccess invalida query para refetch",
+      "useQueryClient para acceder al cache"
+    ],
+    "solutionEn": "const queryClient = useQueryClient(); const mutation = useMutation({ mutationFn: (newPost) => fetch('/api/posts', { method: 'POST', body: JSON.stringify(newPost) }).then(r => r.json()), onMutate: async (newPost) => { await queryClient.cancelQueries({ queryKey: ['posts'] }); const previous = queryClient.getQueryData(['posts']); queryClient.setQueryData(['posts'], (old) => [...(old ?? []), { ...newPost, id: 'temp-' + Date.now() }]); return { previous }; }, onError: (err, vars, context) => { queryClient.setQueryData(['posts'], context?.previous); }, onSettled: () => { queryClient.invalidateQueries({ queryKey: ['posts'] }); } });",
+    "solutionEs": "useMutation con onMutate (optimistic), onError (rollback con context), onSettled (invalidate).",
+    "explanationEn": "Optimistic updates make the UI feel instant: assume success and update the cache immediately. If the mutation fails, revert using the snapshot from onMutate. onSettled ensures the server state is fresh.",
+    "explanationEs": "Las updates optimistas hacen la UI sentir instantánea: asume éxito y actualiza el cache inmediatamente. Si la mutation falla, revierte usando el snapshot de onMutate. onSettled asegura que el estado del servidor esté fresh.",
+    "tags": [
+      "react-query",
+      "mutations",
+      "optimistic"
+    ],
+    "resources": [
+      {
+        "title": "React Query mutations",
+        "url": "https://tanstack.com/query/latest/docs/framework/react/guides/mutations",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sm-8",
+    "slug": "state-management",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Zustand with Slices Pattern",
+    "titleEs": "Zustand con Patrón de Slices",
+    "descriptionEn": "Organize a large Zustand store into multiple slices that can be composed.",
+    "descriptionEs": "Organiza un store grande de Zustand en múltiples slices que se pueden componer.",
+    "hintsEn": [
+      "Each slice is a function that takes set/get and returns its state+actions",
+      "Compose slices with spread",
+      "Useful for large apps with many domains"
+    ],
+    "hintsEs": [
+      "Cada slice es una función que toma set/get y retorna su state+actions",
+      "Compóne slices con spread",
+      "Útil para apps grandes con muchos dominios"
+    ],
+    "solutionEn": "type AuthSlice = { user: User | null; login: (u: User) => void }; type CartSlice = { items: Item[]; add: (i: Item) => void }; const createAuthSlice = (set) => ({ user: null, login: (user) => set({ user }) }); const createCartSlice = (set) => ({ items: [], add: (item) => set((s) => ({ items: [...s.items, item] })) }); const useStore = create<AuthSlice & CartSlice>()((...a) => ({ ...createAuthSlice(...a), ...createCartSlice(...a) }));",
+    "solutionEs": "Slices separados (createAuthSlice, createCartSlice), composed con spread en create principal.",
+    "explanationEn": "Slices pattern keeps stores organized as the app grows. Each slice owns its state and actions, and the main store composes them. TypeScript intersection types make the combined type available.",
+    "explanationEs": "El patrón de slices mantiene los stores organizados conforme la app crece. Cada slice posee su state y actions, y el store principal los compone. Las intersecciones de tipos de TypeScript hacen el tipo combinado disponible.",
+    "tags": [
+      "zustand",
+      "state-management",
+      "patterns"
+    ],
+    "resources": [
+      {
+        "title": "Zustand slices pattern",
+        "url": "https://zustand.docs.pmnd.rs/guides/slices-pattern",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "nx-4",
+    "slug": "nextjs",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Next.js App Router File Conventions",
+    "titleEs": "Convenciones de Archivos del App Router de Next.js",
+    "descriptionEn": "List the special file names in the Next.js App Router and their purpose.",
+    "descriptionEs": "Lista los nombres de archivos especiales en el App Router de Next.js y su propósito.",
+    "hintsEn": [
+      "page.tsx is a route, layout.tsx wraps routes",
+      "loading.tsx shows Suspense fallback",
+      "error.tsx is an error boundary"
+    ],
+    "hintsEs": [
+      "page.tsx es una ruta, layout.tsx envuelve rutas",
+      "loading.tsx muestra fallback de Suspense",
+      "error.tsx es un error boundary"
+    ],
+    "solutionEn": "Files: page.tsx (route UI), layout.tsx (shared wrapper), loading.tsx (Suspense fallback), error.tsx (error boundary), not-found.tsx (404), route.tsx (API endpoint), template.tsx (re-rendered layout), default.tsx (parallel route fallback).",
+    "solutionEs": "page (UI), layout (wrapper), loading (Suspense), error (boundary), not-found (404), route (API), template, default.",
+    "explanationEn": "The App Router uses file-system based routing with special files for common UI patterns. This is the same as nested routing: each folder is a route segment, special files add behavior.",
+    "explanationEs": "El App Router usa routing basado en filesystem con archivos especiales para patrones comunes. Es como routing anidado: cada folder es un segmento de ruta, los archivos especiales añaden comportamiento.",
+    "tags": [
+      "nextjs",
+      "routing",
+      "app-router"
+    ],
+    "resources": [
+      {
+        "title": "Next.js file conventions",
+        "url": "https://nextjs.org/docs/app/api-reference/file-conventions",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "nx-5",
+    "slug": "nextjs",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Dynamic Routes with [slug]",
+    "titleEs": "Rutas Dinámicas con [slug]",
+    "descriptionEn": "Create a dynamic route at app/blog/[slug]/page.tsx that receives params.",
+    "descriptionEs": "Crea una ruta dinámica en app/blog/[slug]/page.tsx que recibe params.",
+    "hintsEn": [
+      "Folder name in brackets: [slug], [...catchAll], [[...optional]]",
+      "params is a Promise in Next 15+",
+      "generateStaticParams for SSG"
+    ],
+    "hintsEs": [
+      "Nombre de folder en brackets: [slug], [...catchAll], [[...optional]]",
+      "params es una Promise en Next 15+",
+      "generateStaticParams para SSG"
+    ],
+    "solutionEn": "export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; const post = await fetchPost(slug); return <article>{post.title}</article>; }",
+    "solutionEs": "params tipado como Promise, await antes de usar, fetch por slug.",
+    "explanationEn": "Dynamic routes in Next.js use bracket notation. In Next 15+, params is a Promise that you must await (this enables streaming and parallel data fetching).",
+    "explanationEs": "Las rutas dinámicas en Next.js usan notación de brackets. En Next 15+, params es una Promise que debes await (esto habilita streaming y data fetching paralelo).",
+    "tags": [
+      "nextjs",
+      "routing",
+      "dynamic"
+    ],
+    "resources": [
+      {
+        "title": "Next.js dynamic routes",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "nx-6",
+    "slug": "nextjs",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Parallel Routes with @slot",
+    "titleEs": "Rutas Paralelas con @slot",
+    "descriptionEn": "Use parallel routes to render multiple pages in the same layout (e.g., main + modal).",
+    "descriptionEs": "Usa rutas paralelas para renderizar múltiples páginas en el mismo layout (ej., main + modal).",
+    "hintsEn": [
+      "Folder prefixed with @: @modal, @sidebar",
+      "Each slot gets its own page.tsx",
+      "default.tsx required for unmatched slots"
+    ],
+    "hintsEs": [
+      "Folder prefijado con @: @modal, @sidebar",
+      "Cada slot tiene su propio page.tsx",
+      "default.tsx requerido para slots no matcheados"
+    ],
+    "solutionEn": "Structure: app/@modal/(.)photos/[id]/page.tsx (intercepted modal). Folder @modal renders into layout's {modal} prop. Each slot needs page.tsx and optionally default.tsx.",
+    "solutionEs": "Folder @modal/(.)photos/[id] para modal interceptado, default.tsx para fallback.",
+    "explanationEn": "Parallel routes are useful for complex layouts with independent navigation (e.g., dashboard with multiple panels). The (.) intercepting routes allow modals that preserve the parent context.",
+    "explanationEs": "Las rutas paralelas son útiles para layouts complejos con navegación independiente (ej. dashboard con múltiples paneles). Las intercepting routes (.) permiten modales que preservan el contexto del padre.",
+    "tags": [
+      "nextjs",
+      "routing",
+      "parallel-routes"
+    ],
+    "resources": [
+      {
+        "title": "Next.js parallel routes",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing/parallel-routes",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "nx-7",
+    "slug": "nextjs",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Route Handlers in route.ts",
+    "titleEs": "Route Handlers en route.ts",
+    "descriptionEn": "Build a GET /api/users route handler with dynamic params and request validation.",
+    "descriptionEs": "Construye un route handler GET /api/users con params dinámicos y validación de request.",
+    "hintsEn": [
+      "route.ts exports named HTTP methods: GET, POST, etc.",
+      "Use Web standard Request/Response",
+      "Validate with Zod"
+    ],
+    "hintsEs": [
+      "route.ts exporta métodos HTTP nombrados: GET, POST, etc.",
+      "Usa Request/Response del estándar Web",
+      "Valida con Zod"
+    ],
+    "solutionEn": "import { z } from 'zod'; export async function GET(req: Request) { const url = new URL(req.url); const params = z.object({ page: z.coerce.number().min(1).default(1), limit: z.coerce.number().max(100).default(20) }).parse(Object.fromEntries(url.searchParams)); const users = await db.user.findMany({ skip: (params.page - 1) * params.limit, take: params.limit }); return Response.json({ users, page: params.page }); }",
+    "solutionEs": "Export async function GET, Zod para validar query params, Response.json para retornar.",
+    "explanationEn": "Route Handlers in the App Router use the Web standard Request/Response API. They run on the server and can use any Node.js feature. Use them for API endpoints, webhooks, or REST APIs.",
+    "explanationEs": "Los Route Handlers en el App Router usan la API estándar Web Request/Response. Corren en el servidor y pueden usar cualquier feature de Node.js. Úsalos para endpoints de API, webhooks, o APIs REST.",
+    "tags": [
+      "nextjs",
+      "api",
+      "route-handlers"
+    ],
+    "resources": [
+      {
+        "title": "Next.js route handlers",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing/route-handlers",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "nx-8",
+    "slug": "nextjs",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Middleware for Auth Protection",
+    "titleEs": "Middleware para Protección de Auth",
+    "descriptionEn": "Create a Next.js middleware that protects /dashboard routes by checking auth cookies.",
+    "descriptionEs": "Crea un middleware de Next.js que proteja las rutas /dashboard verificando cookies de auth.",
+    "hintsEn": [
+      "middleware.ts at the project root",
+      "Configure matcher for which paths run middleware",
+      "Return NextResponse.redirect or NextResponse.next"
+    ],
+    "hintsEs": [
+      "middleware.ts en la raíz del proyecto",
+      "Configura matcher para qué paths ejecutan el middleware",
+      "Retorna NextResponse.redirect o NextResponse.next"
+    ],
+    "solutionEn": "import { NextResponse, type NextRequest } from 'next/server'; export function middleware(req: NextRequest) { const token = req.cookies.get('session'); const isProtected = req.nextUrl.pathname.startsWith('/dashboard'); if (isProtected && !token) { return NextResponse.redirect(new URL('/login', req.url)); } return NextResponse.next(); } export const config = { matcher: ['/((?!api|_next/static|favicon.ico).*)'] };",
+    "solutionEs": "middleware function con NextRequest, check de cookie, NextResponse.redirect, matcher config.",
+    "explanationEn": "Middleware runs before every request matching the matcher. Use it for auth, redirects, headers, A/B testing. Keep it fast: it adds latency to every matched request.",
+    "explanationEs": "El middleware corre antes de cada request que matchea el matcher. Úsalo para auth, redirects, headers, A/B testing. Mantenlo rápido: añade latencia a cada request matcheado.",
+    "tags": [
+      "nextjs",
+      "middleware",
+      "auth"
+    ],
+    "resources": [
+      {
+        "title": "Next.js middleware",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing/middleware",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "db-4",
+    "slug": "database-prisma",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Prisma findMany with Filters",
+    "titleEs": "Prisma findMany con Filtros",
+    "descriptionEn": "Query users from Prisma with filtering, ordering, and pagination.",
+    "descriptionEs": "Consulta users de Prisma con filtrado, ordenado, y paginación.",
+    "hintsEn": [
+      "where for conditions, orderBy for sorting, take/skip for pagination",
+      "Combine conditions with AND, OR, NOT",
+      "Use select to limit fields returned"
+    ],
+    "hintsEs": [
+      "where para condiciones, orderBy para ordenar, take/skip para paginación",
+      "Combina condiciones con AND, OR, NOT",
+      "Usa select para limitar campos retornados"
+    ],
+    "solutionEn": "const users = await prisma.user.findMany({ where: { active: true, role: { in: ['admin', 'user'] } }, orderBy: { createdAt: 'desc' }, take: 20, skip: 0, select: { id: true, name: true, email: true } });",
+    "solutionEs": "findMany con where (active + role in), orderBy createdAt desc, take/skip, select.",
+    "explanationEn": "Prisma's findMany is the workhorse query: filter, sort, paginate, select. Always use select to limit fields - it reduces data transfer and improves security (no accidental exposure of sensitive fields).",
+    "explanationEs": "findMany de Prisma es la query de trabajo: filtrar, ordenar, paginar, select. Siempre usa select para limitar campos - reduce transferencia de datos y mejora la seguridad.",
+    "tags": [
+      "prisma",
+      "query",
+      "filters"
+    ],
+    "resources": [
+      {
+        "title": "Prisma findMany",
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/find-many",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "db-5",
+    "slug": "database-prisma",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Prisma Relations and Includes",
+    "titleEs": "Relaciones e Includes de Prisma",
+    "descriptionEn": "Query a user with their posts and post comments using nested includes.",
+    "descriptionEs": "Consulta un user con sus posts y comentarios de cada post usando includes anidados.",
+    "hintsEn": [
+      "include loads related models",
+      "Nested include: include.posts.include.comments",
+      "Use depth limit to avoid infinite recursion"
+    ],
+    "hintsEs": [
+      "include carga modelos relacionados",
+      "Include anidado: include.posts.include.comments",
+      "Usa depth limit para evitar recursión infinita"
+    ],
+    "solutionEn": "const user = await prisma.user.findUnique({ where: { id: userId }, include: { posts: { include: { comments: { include: { author: { select: { name: true } } } } } } } });",
+    "solutionEs": "findUnique con include.posts.include.comments.include.author.",
+    "explanationEn": "Nested includes are convenient but can be slow with deep relationships. For complex queries, consider raw SQL or splitting into multiple queries.",
+    "explanationEs": "Los includes anidados son convenientes pero pueden ser lentos con relaciones profundas. Para queries complejas, considera SQL raw o dividir en múltiples queries.",
+    "tags": [
+      "prisma",
+      "relations",
+      "includes"
+    ],
+    "resources": [
+      {
+        "title": "Prisma eager loading",
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "db-6",
+    "slug": "database-prisma",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Prisma Migrations Workflow",
+    "titleEs": "Flujo de Migraciones de Prisma",
+    "descriptionEn": "Walk through the workflow for adding a new field to a model: schema change, migration, deploy.",
+    "descriptionEs": "Recorre el flujo para añadir un nuevo campo a un modelo: cambio de schema, migración, deploy.",
+    "hintsEn": [
+      "prisma migrate dev creates migration + applies it locally",
+      "prisma migrate deploy for production (applies without creating)",
+      "Always commit migration files"
+    ],
+    "hintsEs": [
+      "prisma migrate dev crea migración + la aplica localmente",
+      "prisma migrate deploy para producción (aplica sin crear)",
+      "Siempre commitea los archivos de migración"
+    ],
+    "solutionEn": "1. Edit schema.prisma: add field. 2. npx prisma migrate dev --name add_user_avatar creates prisma/migrations/20240701_add_user_avatar/migration.sql. 3. Migration file is generated: ALTER TABLE \"User\" ADD COLUMN \"avatar\" TEXT. 4. Generated Prisma Client is regenerated. 5. Commit. 6. In production: prisma migrate deploy.",
+    "solutionEs": "Edit schema, prisma migrate dev con --name, archivo SQL generado, commit, prisma migrate deploy en prod.",
+    "explanationEn": "Never edit a migration file after committing it. For schema changes, create a new migration. For data migrations (backfills), use a separate script run after the schema migration.",
+    "explanationEs": "Nunca edites un archivo de migración después de commitearlo. Para cambios de schema, crea una nueva migración. Para data migrations (backfills), usa un script separado que corra después de la migración de schema.",
+    "tags": [
+      "prisma",
+      "migrations",
+      "workflow"
+    ],
+    "resources": [
+      {
+        "title": "Prisma Migrate",
+        "url": "https://www.prisma.io/docs/orm/prisma-migrate",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "db-7",
+    "slug": "database-prisma",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Database Indexes for Performance",
+    "titleEs": "Índices de Base de Datos para Performance",
+    "descriptionEn": "Explain when and how to add indexes to a Prisma schema. Cover composite, unique, and partial indexes.",
+    "descriptionEs": "Explica cuándo y cómo añadir índices al schema de Prisma. Cubre índices compuestos, únicos, y parciales.",
+    "hintsEn": [
+      "@@index on the model for non-unique",
+      "@@unique for unique constraints",
+      "Composite index: @@index([a, b]) for queries that filter/sort on both",
+      "Partial: @@index([email], where: ...)"
+    ],
+    "hintsEs": [
+      "@@index en el modelo para no-único",
+      "@@unique para constraints únicos",
+      "Índice compuesto: @@index([a, b]) para queries que filtran/ordenan por ambos",
+      "Parcial: @@index([email], where: ...)"
+    ],
+    "solutionEn": "model User { id String @id @default(cuid()) email String @unique createdAt DateTime @default(now()) @@index([email, createdAt]) @@index([createdAt(sort: Desc)]) } // @@unique: enforces uniqueness AND creates index. // Composite [email, createdAt]: optimal for WHERE email = ? ORDER BY createdAt. // Sort hint: createdAt(sort: Desc) avoids sort step on descending queries.",
+    "solutionEs": "@@index compuesto, @unique, sort hint Desc en el schema.",
+    "explanationEn": "Indexes are not free: they slow down writes and use storage. Add them only for queries you actually run. Use EXPLAIN ANALYZE to verify the index is being used.",
+    "explanationEs": "Los índices no son gratis: hacen las escrituras más lentas y usan storage. Añádelos solo para queries que realmente corres. Usa EXPLAIN ANALYZE para verificar que el índice se está usando.",
+    "tags": [
+      "prisma",
+      "indexes",
+      "performance"
+    ],
+    "resources": [
+      {
+        "title": "Prisma indexes",
+        "url": "https://www.prisma.io/docs/orm/prisma-schema/data-model/indexes",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "db-8",
+    "slug": "database-prisma",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "N+1 Query Problem and Solution",
+    "titleEs": "Problema de N+1 Queries y Solución",
+    "descriptionEn": "Identify the N+1 problem in a loop of queries and show the fix using include or DataLoader.",
+    "descriptionEs": "Identifica el problema N+1 en un loop de queries y muestra la solución usando include o DataLoader.",
+    "hintsEn": [
+      "1 query for list + N queries for each item's relation",
+      "Fix: include in single query, or batch with IN clause",
+      "DataLoader caches and batches within a request"
+    ],
+    "hintsEs": [
+      "1 query para la lista + N queries para cada item relacionado",
+      "Fix: include en una sola query, o batch con IN clause",
+      "DataLoader cachea y batchea dentro de un request"
+    ],
+    "solutionEn": "// ❌ N+1: const users = await prisma.user.findMany(); for (const u of users) { u.posts = await prisma.post.findMany({ where: { authorId: u.id } }); } // ✅ Fix 1: include const users = await prisma.user.findMany({ include: { posts: true } }); // ✅ Fix 2: IN clause const userIds = users.map(u => u.id); const posts = await prisma.post.findMany({ where: { authorId: { in: userIds } } }); // Map posts by authorId to users",
+    "solutionEs": "Include en una sola query, o IN clause con map manual.",
+    "explanationEn": "N+1 is one of the most common performance bugs. Always check the query count when fetching lists with relations. DataLoader adds caching: subsequent calls with the same key return the cached result.",
+    "explanationEs": "N+1 es uno de los bugs de performance más comunes. Siempre verifica el conteo de queries al fetchear listas con relaciones. DataLoader añade cache: llamadas subsecuentes con la misma key retornan el resultado cacheado.",
+    "tags": [
+      "prisma",
+      "performance",
+      "n+1"
+    ],
+    "resources": [
+      {
+        "title": "N+1 problem",
+        "url": "https://stackoverflow.com/questions/97197/what-is-the-n1-selects-problem",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sec-4",
+    "slug": "security-auth",
+    "difficulty": "basic",
+    "type": "conceptual",
+    "points": 10,
+    "titleEn": "Hashing vs Encryption",
+    "titleEs": "Hashing vs Cifrado",
+    "descriptionEn": "Explain the difference between hashing and encryption. When do you use each?",
+    "descriptionEs": "Explica la diferencia entre hashing y cifrado. ¿Cuándo usas cada uno?",
+    "hintsEn": [
+      "Hashing is one-way, encryption is two-way",
+      "Passwords: always hash (you don't need to recover them)",
+      "Data you need to read back: encrypt"
+    ],
+    "hintsEs": [
+      "Hashing es one-way, cifrado es two-way",
+      "Contraseñas: siempre hashea (no necesitas recuperarlas)",
+      "Datos que necesitas leer: cifra"
+    ],
+    "solutionEn": "Hashing: one-way function, same input always produces same output, used for passwords, integrity checks. Cannot be reversed without brute force. Examples: bcrypt, Argon2id, SHA-256. Encryption: two-way with a key, used to protect data at rest or in transit that you need to read later. Examples: AES-256-GCM, ChaCha20.",
+    "solutionEs": "Hashing es one-way (mismo input → mismo output), para passwords e integridad, bcrypt/Argon2id/SHA-256. Cifrado es two-way con key, para datos que necesitas leer, AES-256-GCM.",
+    "explanationEn": "Common mistake: storing passwords encrypted instead of hashed. Encryption is reversible (with the key), so an attacker who steals the key gets all passwords. Hashing is irreversible, so even with the hash table, brute force is needed.",
+    "explanationEs": "Error común: almacenar contraseñas cifradas en lugar de hasheadas. El cifrado es reversible (con la key), así que un atacante que robe la key obtiene todas las contraseñas. El hashing es irreversible.",
+    "tags": [
+      "security",
+      "crypto",
+      "fundamentals"
+    ],
+    "resources": [
+      {
+        "title": "OWASP Cryptographic Storage",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sec-5",
+    "slug": "security-auth",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "JWT vs Session Cookies",
+    "titleEs": "JWT vs Cookies de Sesión",
+    "descriptionEn": "Compare JWT (in localStorage) vs session cookies for auth. Pros and cons of each.",
+    "descriptionEs": "Compara JWT (en localStorage) vs cookies de sesión para auth. Pros y cons de cada uno.",
+    "hintsEn": [
+      "localStorage JWT is vulnerable to XSS",
+      "Cookies can be HttpOnly (immune to XSS) but vulnerable to CSRF",
+      "Use SameSite=Strict + HttpOnly cookies for best security"
+    ],
+    "hintsEs": [
+      "JWT en localStorage es vulnerable a XSS",
+      "Las cookies pueden ser HttpOnly (inmunes a XSS) pero vulnerables a CSRF",
+      "Usa cookies SameSite=Strict + HttpOnly para mejor seguridad"
+    ],
+    "solutionEn": "JWT in localStorage: easy to use, but XSS can steal it. Session cookies (HttpOnly + Secure + SameSite=Strict): immune to XSS, but need CSRF protection (double-submit cookie, CSRF token, or SameSite=Strict). Best practice: short-lived access token in HttpOnly cookie + refresh token in HttpOnly cookie.",
+    "solutionEs": "JWT en localStorage vulnerable a XSS, cookies HttpOnly immune a XSS pero necesitan CSRF protection. Best practice: short-lived access token en HttpOnly + refresh token.",
+    "explanationEn": "Modern recommendation: HttpOnly cookies with SameSite=Lax or Strict for the access token, and a separate refresh token in another HttpOnly cookie. The browser automatically sends cookies; you don't need JS access.",
+    "explanationEs": "Recomendación moderna: cookies HttpOnly con SameSite=Lax o Strict para el access token, y un refresh token separado en otra cookie HttpOnly. El navegador envía las cookies automáticamente.",
+    "tags": [
+      "security",
+      "auth",
+      "jwt"
+    ],
+    "resources": [
+      {
+        "title": "OWASP JWT Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sec-6",
+    "slug": "security-auth",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Password Reset Flow",
+    "titleEs": "Flujo de Reset de Contraseña",
+    "descriptionEn": "Design a secure password reset flow: token generation, email, expiration, single-use.",
+    "descriptionEs": "Diseña un flujo seguro de reset de contraseña: generación de token, email, expiración, single-use.",
+    "hintsEn": [
+      "Token: cryptographically random 32+ bytes",
+      "Hash token in DB (in case of DB breach)",
+      "Expire in 1 hour, single-use, mark consumed"
+    ],
+    "hintsEs": [
+      "Token: 32+ bytes random criptográficos",
+      "Hashea el token en BD (en caso de breach)",
+      "Expira en 1 hora, single-use, márcalo consumido"
+    ],
+    "solutionEn": "1. POST /api/reset-password { email }. Generate token = randomBytes(32).toString('hex'). Hash = sha256(token). Save to ResetToken { userId, hash, expiresAt: now+1h, used: false }. Email link: /reset-password?token={token}. 2. POST /api/reset-password/confirm { token, newPassword }. Look up by hash, check not expired, not used. Mark used. Update password. Invalidate all other reset tokens for user.",
+    "solutionEs": "Genera randomBytes(32), hashea con SHA-256, guarda con expiresAt y used:false, link por email, al confirmar valida y marca usado.",
+    "explanationEn": "Hashing the token in DB means a DB breach doesn't give attackers valid reset tokens. Single-use prevents replay. Short expiration limits attack window. Invalidate all tokens on success in case the user has multiple in-flight resets.",
+    "explanationEs": "Hashear el token en BD significa que un breach de BD no da a los atacantes tokens válidos. Single-use previene replay. Expiración corta limita la ventana de ataque.",
+    "tags": [
+      "security",
+      "auth",
+      "password-reset"
+    ],
+    "resources": [
+      {
+        "title": "OWASP Forgot Password",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sec-7",
+    "slug": "security-auth",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "RBAC vs ABAC Authorization",
+    "titleEs": "Autorización RBAC vs ABAC",
+    "descriptionEn": "Compare Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC). When to use each?",
+    "descriptionEs": "Compara Role-Based Access Control (RBAC) y Attribute-Based Access Control (ABAC). ¿Cuándo usar cada uno?",
+    "hintsEn": [
+      "RBAC: roles are simple, few of them, low churn",
+      "ABAC: complex rules based on user/resource/environment attributes",
+      "RBAC for most apps, ABAC for compliance-heavy domains"
+    ],
+    "hintsEs": [
+      "RBAC: roles son simples, pocos, baja rotación",
+      "ABAC: reglas complejas basadas en atributos de user/resource/entorno",
+      "RBAC para la mayoría de apps, ABAC para dominios con compliance"
+    ],
+    "solutionEn": "RBAC: user has role (admin, editor, viewer), each role has a set of permissions. Simple, fast checks, easy to understand. ABAC: rule = (subject, action, resource, environment) → boolean. Examples: 'user can edit document if user is owner AND document.status == draft AND current_time < document.expiresAt'. More flexible but complex to reason about.",
+    "solutionEs": "RBAC: user.role, role.permissions, simple y rápido. ABAC: rule(subject, action, resource, env) → bool, más flexible pero complejo.",
+    "explanationEn": "Start with RBAC. Move to ABAC when you have complex rules (e.g., 'editors can edit their own posts, but admins can edit any post, except when the post is in a compliance review state').",
+    "explanationEs": "Empieza con RBAC. Pasa a ABAC cuando tengas reglas complejas (ej. 'editores pueden editar sus propios posts, pero admins pueden editar cualquiera, excepto cuando está en review de compliance').",
+    "tags": [
+      "security",
+      "authorization",
+      "rbac",
+      "abac"
+    ],
+    "resources": [
+      {
+        "title": "NIST RBAC",
+        "url": "https://csrc.nist.gov/projects/role-based-access-control",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sec-8",
+    "slug": "security-auth",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "OAuth 2.0 Authorization Code Flow",
+    "titleEs": "Flujo de Código de Autorización OAuth 2.0",
+    "descriptionEn": "Walk through the OAuth 2.0 Authorization Code flow with PKCE for SPAs.",
+    "descriptionEs": "Recorre el flujo de Código de Autorización OAuth 2.0 con PKCE para SPAs.",
+    "hintsEn": [
+      "PKCE prevents authorization code interception",
+      "code_verifier → code_challenge (SHA-256 hash, base64url)",
+      "Public clients (SPAs) must use PKCE"
+    ],
+    "hintsEs": [
+      "PKCE previene la intercepción del código de autorización",
+      "code_verifier → code_challenge (hash SHA-256, base64url)",
+      "Los clientes públicos (SPAs) deben usar PKCE"
+    ],
+    "solutionEn": "1. SPA generates code_verifier (random 43-128 chars), code_challenge = base64url(sha256(code_verifier)). 2. Redirect to /authorize?response_type=code&client_id=...&redirect_uri=...&code_challenge=...&code_challenge_method=S256. 3. User authenticates at IdP, grants consent. 4. IdP redirects to /callback?code=AUTH_CODE. 5. SPA POSTs to /token with code + code_verifier. 6. IdP verifies hash matches, returns access_token + refresh_token.",
+    "solutionEs": "Genera code_verifier y code_challenge, redirect a /authorize con challenge, recibe code, POST a /token con verifier, recibe tokens.",
+    "explanationEn": "PKCE is mandatory for public clients (SPAs, mobile apps) since OAuth 2.1. The code_verifier proves the client that started the flow is the one exchanging the code, preventing code interception attacks.",
+    "explanationEs": "PKCE es obligatorio para clientes públicos (SPAs, mobile apps) desde OAuth 2.1. El code_verifier prueba que el cliente que inició el flow es el que intercambia el code.",
+    "tags": [
+      "security",
+      "oauth",
+      "pkce"
+    ],
+    "resources": [
+      {
+        "title": "RFC 7636 - PKCE",
+        "url": "https://datatracker.ietf.org/doc/html/rfc7636",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rt-4",
+    "slug": "realtime-systems",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "WebSocket Connection Lifecycle",
+    "titleEs": "Ciclo de Vida de Conexión WebSocket",
+    "descriptionEn": "Walk through the WebSocket connection lifecycle: open, message, close, error events.",
+    "descriptionEs": "Recorre el ciclo de vida de la conexión WebSocket: open, message, close, error events.",
+    "hintsEn": [
+      "onopen fires when connection established",
+      "onmessage for each incoming frame",
+      "onclose with code and reason"
+    ],
+    "hintsEs": [
+      "onopen dispara cuando se establece la conexión",
+      "onmessage por cada frame entrante",
+      "onclose con code y reason"
+    ],
+    "solutionEn": "const ws = new WebSocket('wss://api.example.com/socket'); ws.onopen = () => console.log('Connected'); ws.onmessage = (event) => { const data = JSON.parse(event.data); console.log('Message:', data); }; ws.onclose = (event) => console.log('Closed:', event.code, event.reason); ws.onerror = (error) => console.error('Error:', error); ws.send(JSON.stringify({ type: 'hello' }));",
+    "solutionEs": "new WebSocket, handlers para onopen/onmessage/onclose/onerror, send para enviar.",
+    "explanationEn": "WebSocket is a full-duplex protocol over a single TCP connection. After the HTTP Upgrade handshake, the connection stays open for bidirectional messages. Close codes 1000 (normal) and 1001 (going away) are common; 4xxx are application-specific.",
+    "explanationEs": "WebSocket es un protocolo full-duplex sobre una conexión TCP. Tras el handshake HTTP Upgrade, la conexión queda abierta para mensajes bidireccionales. Códigos de cierre comunes: 1000 (normal) y 1001 (going away).",
+    "tags": [
+      "websocket",
+      "realtime"
+    ],
+    "resources": [
+      {
+        "title": "MDN WebSocket",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rt-5",
+    "slug": "realtime-systems",
+    "difficulty": "basic",
+    "type": "coding",
+    "points": 10,
+    "language": "typescript",
+    "titleEn": "Server-Sent Events (SSE) Basics",
+    "titleEs": "Server-Sent Events (SSE) Básico",
+    "descriptionEn": "Implement a simple Server-Sent Events endpoint: keep connection open, send events with EventSource.",
+    "descriptionEs": "Implementa un endpoint simple de Server-Sent Events: mantiene la conexión abierta, envía eventos con EventSource.",
+    "hintsEn": [
+      "SSE is server-to-client only (unidirectional)",
+      "Content-Type: text/event-stream",
+      "EventSource auto-reconnects on disconnect"
+    ],
+    "hintsEs": [
+      "SSE es solo server-to-client (unidireccional)",
+      "Content-Type: text/event-stream",
+      "EventSource reconecta automáticamente al desconectar"
+    ],
+    "solutionEn": "// Server (Express) app.get('/events', (req, res) => { res.setHeader('Content-Type', 'text/event-stream'); res.setHeader('Cache-Control', 'no-cache'); res.setHeader('Connection', 'keep-alive'); const interval = setInterval(() => { res.write(`data: ${JSON.stringify({ time: Date.now() })}\\n\\n`); }, 1000); req.on('close', () => clearInterval(interval)); }); // Client const events = new EventSource('/events'); events.onmessage = (e) => { const data = JSON.parse(e.data); console.log(data); };",
+    "solutionEs": "Server: text/event-stream + write data: JSON \\n\\n. Client: new EventSource con onmessage.",
+    "explanationEn": "SSE is simpler than WebSockets for server-to-client streaming (notifications, live updates). Auto-reconnect is built in. The trade-off: unidirectional (no client-to-server messages over the same connection).",
+    "explanationEs": "SSE es más simple que WebSockets para streaming server-to-client (notificaciones, live updates). Auto-reconnect integrado. Trade-off: unidireccional.",
+    "tags": [
+      "sse",
+      "realtime"
+    ],
+    "resources": [
+      {
+        "title": "MDN Server-Sent Events",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rt-6",
+    "slug": "realtime-systems",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Polling vs Long Polling vs WebSockets",
+    "titleEs": "Polling vs Long Polling vs WebSockets",
+    "descriptionEn": "Compare polling, long polling, and WebSockets. When to use each?",
+    "descriptionEs": "Compara polling, long polling, y WebSockets. ¿Cuándo usar cada uno?",
+    "hintsEn": [
+      "Polling: simple but wasteful",
+      "Long polling: server holds request open",
+      "WebSockets: bidirectional, low overhead"
+    ],
+    "hintsEs": [
+      "Polling: simple pero wasteful",
+      "Long polling: server mantiene el request abierto",
+      "WebSockets: bidireccional, bajo overhead"
+    ],
+    "solutionEn": "Polling: client requests every N seconds. Simple, works everywhere, but wastes requests when no new data. Long polling: client requests, server holds until new data or timeout. Reduces waste, more complex. SSE: server-to-client stream over HTTP. Built-in reconnect. WebSockets: full-duplex, lowest latency, needs separate WebSocket server or library.",
+    "solutionEs": "Polling cada N segundos (simple pero wasteful), long polling (server holds), SSE (server-to-client stream), WebSockets (full-duplex, menor latencia).",
+    "explanationEn": "Choose based on: data freshness requirement, message frequency, bidirectional need, and existing infrastructure. Most chat/notifications use WebSockets; live dashboards often use SSE; simple status checks use polling.",
+    "explanationEs": "Elige según: requisito de freshness, frecuencia de mensajes, necesidad bidireccional, e infraestructura. La mayoría de chat/notificaciones usa WebSockets; dashboards en vivo a menudo SSE; checks de status simples usan polling.",
+    "tags": [
+      "realtime",
+      "websocket",
+      "polling",
+      "sse"
+    ],
+    "resources": [
+      {
+        "title": "WebSocket vs SSE comparison",
+        "url": "https://ably.com/blog/websockets-vs-server-sent-events",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "rt-7",
+    "slug": "realtime-systems",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Pub/Sub with Redis",
+    "titleEs": "Pub/Sub con Redis",
+    "descriptionEn": "Implement a publish/subscribe pattern using Redis for cross-instance message broadcasting.",
+    "descriptionEs": "Implementa un patrón publish/subscribe usando Redis para broadcasting de mensajes cross-instance.",
+    "hintsEn": [
+      "One Redis client for subscribing, another for publishing",
+      "redis.subscribe('channel') and on('message', ...)",
+      "Pub/Sub messages are not persisted: missed = lost"
+    ],
+    "hintsEs": [
+      "Un cliente Redis para subscribe, otro para publish",
+      "redis.subscribe('channel') y on('message', ...)",
+      "Los mensajes Pub/Sub no se persisten: perdidos = perdidos"
+    ],
+    "solutionEn": "import { createClient } from 'redis'; const sub = createClient({ url: 'redis://localhost' }); const pub = createClient({ url: 'redis://localhost' }); await Promise.all([sub.connect(), pub.connect()]); await sub.subscribe('notifications', (msg) => { console.log('Received:', msg); }); // In another process/service: await pub.publish('notifications', JSON.stringify({ type: 'new_post' }));",
+    "solutionEs": "Dos clientes (sub + pub), sub.connect + subscribe(channel, callback), pub.publish.",
+    "explanationEn": "Pub/Sub is fire-and-forget: if a subscriber is offline, the message is lost. For reliable delivery, use Redis Streams or a message queue (RabbitMQ, Kafka). Pub/Sub is perfect for broadcast notifications.",
+    "explanationEs": "Pub/Sub es fire-and-forget: si un subscriber está offline, el mensaje se pierde. Para delivery confiable, usa Redis Streams o una cola de mensajes (RabbitMQ, Kafka). Pub/Sub es perfecto para notificaciones broadcast.",
+    "tags": [
+      "realtime",
+      "redis",
+      "pub-sub"
+    ],
+    "resources": [
+      {
+        "title": "Redis Pub/Sub",
+        "url": "https://redis.io/docs/manual/pubsub/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "rt-8",
+    "slug": "realtime-systems",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Presence Detection with Heartbeats",
+    "titleEs": "Detección de Presencia con Heartbeats",
+    "descriptionEn": "Implement a presence system: client sends heartbeat every 30s, server marks user offline after 90s of silence.",
+    "descriptionEs": "Implementa un sistema de presencia: cliente envía heartbeat cada 30s, servidor marca al usuario offline tras 90s de silencio.",
+    "hintsEn": [
+      "Store lastSeen in Redis with TTL",
+      "Use Sorted Set indexed by lastSeen timestamp",
+      "Background job checks for expired users"
+    ],
+    "hintsEs": [
+      "Guarda lastSeen en Redis con TTL",
+      "Usa Sorted Set indexado por timestamp lastSeen",
+      "Job en background verifica usuarios expirados"
+    ],
+    "solutionEn": "// On heartbeat: await redis.zadd('presence', Date.now(), userId); // Check who's online: const now = Date.now(); const online = await redis.zrangebyscore('presence', now - 90_000, '+inf'); // Cleanup job: const offline = await redis.zrangebyscore('presence', '-inf', now - 90_000); if (offline.length) await redis.zrem('presence', ...offline); // Broadcast: pub.publish('presence', JSON.stringify({ online, offline }));",
+    "solutionEs": "zadd on heartbeat, zrangebyscore con timestamp cutoff, cleanup job con zrem.",
+    "explanationEn": "Redis Sorted Sets are perfect for this: score = timestamp, member = userId. ZRANGEBYSCORE returns users active within the window. O(log n) for both insert and query.",
+    "explanationEs": "Los Sorted Sets de Redis son perfectos para esto: score = timestamp, member = userId. ZRANGEBYSCORE retorna usuarios activos en la ventana. O(log n) para insert y query.",
+    "starterCode": "// Your implementation",
+    "tags": [
+      "realtime",
+      "presence",
+      "redis"
+    ],
+    "resources": [
+      {
+        "title": "Redis Sorted Sets",
+        "url": "https://redis.io/docs/data-types/sorted-sets/",
+        "type": "documentation"
+      }
+    ]
+  }
+]

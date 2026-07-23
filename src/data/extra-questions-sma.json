@@ -1,0 +1,862 @@
+[
+  {
+    "id": "sma-4",
+    "slug": "social-media-app",
+    "difficulty": "senior",
+    "type": "coding",
+    "points": 100,
+    "language": "typescript",
+    "titleEn": "Server Action with Zod Validation",
+    "titleEs": "Server Action con Validación Zod",
+    "descriptionEn": "Create a Next.js Server Action that creates a post with Zod validation, handles errors gracefully, and revalidates the cache.",
+    "descriptionEs": "Crea un Server Action de Next.js que cree un post con validación Zod, maneje errores correctamente, y revalide el caché.",
+    "hintsEn": [
+      "Use 'use server' directive at the top of the file",
+      "Zod schema validates input on the server (never trust client)",
+      "revalidatePath or revalidateTag updates the cache"
+    ],
+    "hintsEs": [
+      "Usa la directiva 'use server' al inicio del archivo",
+      "El schema Zod valida el input en el servidor (nunca confíes en el cliente)",
+      "revalidatePath o revalidateTag actualiza el caché"
+    ],
+    "solutionEn": "Server Action marked with 'use server'. Define Zod schema with CreatePostSchema. Use safeParse on FormData. Return State object: { success, error?, postId? }. On success, prisma.post.create + revalidatePath('/feed') + revalidatePath('/profile/{userId}'). On error, return State with error message.",
+    "solutionEs": "Server Action con 'use server', validación Zod con safeParse, manejo de errores devolviendo un objeto State, revalidatePath para invalidar el caché.",
+    "explanationEn": "Server Actions must validate input on the server because the client can be tampered with. Returning a State object lets the form use useActionState for error display. revalidatePath ensures the feed shows the new post without a full reload.",
+    "explanationEs": "Los Server Actions deben validar en el servidor porque el cliente puede ser manipulado. Retornar un objeto State permite usar useActionState para mostrar errores. revalidatePath asegura que el feed muestre el nuevo post sin recarga completa.",
+    "starterCode": "'use server'\n\nimport { z } from 'zod'\n\nexport async function createPost(formData: FormData) { /* TODO */ }",
+    "tags": [
+      "nextjs",
+      "server-actions",
+      "zod",
+      "validation"
+    ],
+    "resources": [
+      {
+        "title": "Next.js Server Actions",
+        "url": "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-5",
+    "slug": "social-media-app",
+    "difficulty": "senior",
+    "type": "conceptual",
+    "points": 100,
+    "titleEn": "Mentions System with Autocomplete",
+    "titleEs": "Sistema de Menciones con Autocomplete",
+    "descriptionEn": "Design a @mention system that triggers autocomplete when the user types @, searches users via Server Action, and inserts the selected mention into the post.",
+    "descriptionEs": "Diseña un sistema de @menciones que dispare autocomplete cuando el usuario escribe @, busque usuarios via Server Action, e inserte la mención seleccionada en el post.",
+    "hintsEn": [
+      "Detect the @ character and the cursor position to determine the query",
+      "Debounce input by 200-300ms before calling the search Server Action",
+      "Render the mention as a clickable chip in the post and a link to the profile"
+    ],
+    "hintsEs": [
+      "Detecta el carácter @ y la posición del cursor para determinar la query",
+      "Debounce el input 200-300ms antes de llamar al Server Action",
+      "Renderiza la mención como un chip clickeable y un link al perfil"
+    ],
+    "solutionEn": "1) Detection: onChange finds last @ before cursor, extracts query. 2) Server Action searchUsers(query) returns top 5 matches. 3) Debounce 250ms before search. 4) On select, replace partial mention in textarea with @username. 5) Track mentions in Set for notifications. 6) Render as link to /user/username.",
+    "solutionEs": "Detector de @ en el input, debounce de 250ms, Server Action para buscar usuarios, reemplazo del texto parcial con @username. Renderizar en el post como link a /user/username.",
+    "explanationEn": "A mention system combines text input parsing, async search, and inline replacement. The trickiest part is detecting the active mention: you need cursor position + the text from the last @. Debouncing prevents excessive server calls while typing.",
+    "explanationEs": "Un sistema de menciones combina parsing de texto, búsqueda asíncrona, y reemplazo inline. La parte difícil es detectar la mención activa: necesitas posición del cursor + texto desde el último @. El debouncing previene llamadas excesivas.",
+    "tags": [
+      "nextjs",
+      "ux",
+      "autocomplete",
+      "mentions"
+    ],
+    "resources": [
+      {
+        "title": "Building a Twitter-like mention system",
+        "url": "https://github.com/yet3/tailwindcss-text-input-highlight",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sma-6",
+    "slug": "social-media-app",
+    "difficulty": "senior",
+    "type": "conceptual",
+    "points": 100,
+    "titleEn": "XSS Sanitization Multi-Layered",
+    "titleEs": "Sanitización XSS Multicapa",
+    "descriptionEn": "Explain the layers of XSS defense when rendering user-generated content in a social media app: input sanitization, output encoding, and CSP.",
+    "descriptionEs": "Explica las capas de defensa contra XSS al renderizar contenido generado por el usuario en una app de redes sociales: sanitización de input, encoding de output, y CSP.",
+    "hintsEn": [
+      "Never trust the client - sanitize on the server",
+      "Use allowlists for HTML tags, not denylists",
+      "React already escapes strings in JSX, but dangerouslySetInnerHTML is the exception"
+    ],
+    "hintsEs": [
+      "Nunca confíes en el cliente - sanitiza en el servidor",
+      "Usa allowlists para tags HTML, no denylists",
+      "React ya escapa strings en JSX, pero dangerouslySetInnerHTML es la excepción"
+    ],
+    "solutionEn": "Layer 1: DOMPurify server-side with allowlist (p, br, a, strong, em, code). Layer 2: React JSX escapes by default. Layer 3: URL sanitizer (https only). Layer 4: CSP headers (script-src self, no inline). Layer 5: Store raw in DB, sanitize at read boundary.",
+    "solutionEs": "5 capas: DOMPurify al recibir (allowlist), output encoding via React, URL sanitizer para https only, CSP headers, y mantener raw en DB pero sanitizar al renderizar.",
+    "explanationEn": "Multi-layered XSS defense follows the principle of defense in depth: even if one layer fails, the next catches the attack. Input sanitization removes dangerous tags, output encoding prevents script execution, CSP blocks inline scripts, and URL sanitization prevents javascript: URLs.",
+    "explanationEs": "La defensa XSS multicapa sigue el principio de defensa en profundidad: si una capa falla, la siguiente captura el ataque. Sanitización de input remueve tags peligrosos, output encoding previene ejecución de scripts.",
+    "tags": [
+      "security",
+      "xss",
+      "sanitization",
+      "react"
+    ],
+    "resources": [
+      {
+        "title": "OWASP XSS Prevention Cheat Sheet",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-7",
+    "slug": "social-media-app",
+    "difficulty": "senior",
+    "type": "coding",
+    "points": 100,
+    "language": "typescript",
+    "titleEn": "Optimistic Updates with Rollback",
+    "titleEs": "Actualizaciones Optimistas con Rollback",
+    "descriptionEn": "Implement an optimistic like button: update UI immediately, send the request, and rollback if it fails. Use useOptimistic hook.",
+    "descriptionEs": "Implementa un botón de like optimista: actualiza la UI inmediatamente, envía el request, y haz rollback si falla. Usa el hook useOptimistic.",
+    "hintsEn": [
+      "useOptimistic takes a state and an update function",
+      "The Server Action returns the new count or throws",
+      "On error, the optimistic state is automatically rolled back"
+    ],
+    "hintsEs": [
+      "useOptimistic toma un state y una función de update",
+      "El Server Action retorna el nuevo count o lanza error",
+      "En error, el optimistic state se hace rollback automáticamente"
+    ],
+    "solutionEn": "useOptimistic(state, (s, action) => ({ liked: action === 'like', count: s.count + (action === 'like' ? 1 : -1) })). handleClick: startTransition + addOptimistic + await toggleLike. On error, optimistic state auto-rollbacks. Server Action toggleLike uses revalidatePath to sync.",
+    "solutionEs": "useOptimistic muestra el cambio inmediato, startTransition envuelve el Server Action, y al fallar el state vuelve automáticamente al valor real. revalidatePath sincroniza con la BD.",
+    "explanationEn": "Optimistic updates make UIs feel instant. The trick: useOptimistic is only valid inside a transition, and the rollback happens automatically because the next render with the source state (from the server) wins.",
+    "explanationEs": "Las updates optimistas hacen la UI sentir instantánea. El truco: useOptimistic solo es válido dentro de un transition, y el rollback ocurre automáticamente porque el próximo render con el state real (del servidor) gana.",
+    "starterCode": "'use client'\n\nexport function LikeButton({ liked, count }: { liked: boolean; count: number }) { return <button>like</button>; }",
+    "tags": [
+      "nextjs",
+      "react",
+      "optimistic-updates",
+      "ux"
+    ],
+    "resources": [
+      {
+        "title": "React useOptimistic",
+        "url": "https://react.dev/reference/react/useOptimistic",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-8",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Cursor-Based Pagination",
+    "titleEs": "Paginación con Cursor",
+    "descriptionEn": "Implement cursor-based pagination for an infinite scrolling feed. Why is it preferred over offset pagination?",
+    "descriptionEs": "Implementa paginación con cursor para un feed con scroll infinito. ¿Por qué es preferida sobre la paginación con offset?",
+    "hintsEn": [
+      "Use 'cursor' (last seen ID) instead of 'skip(offset)'",
+      "Order by createdAt DESC, id DESC for stable ordering",
+      "Server returns {items, nextCursor} where nextCursor is the last item's id"
+    ],
+    "hintsEs": [
+      "Usa 'cursor' (último ID visto) en lugar de 'skip(offset)'",
+      "Ordena por createdAt DESC, id DESC para orden estable",
+      "El servidor retorna {items, nextCursor} donde nextCursor es el id del último item"
+    ],
+    "solutionEn": "getFeed(cursor?) uses prisma.post.findMany({ take: limit+1, cursor: { id: cursor }, skip: 1, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] }). Returns { items, nextCursor, hasMore }. Client uses useInfiniteQuery + IntersectionObserver. Why cursor > offset: O(1) vs O(n), stable under inserts.",
+    "solutionEs": "getFeed(cursor?) con findMany({take, cursor, orderBy}). Cliente con useInfiniteQuery e IntersectionObserver para auto-fetch. Cursor es O(1) y estable bajo inserts.",
+    "explanationEn": "Offset pagination has two problems: (1) performance degrades as the offset grows because the DB must scan and discard rows, (2) inserts shift content between pages. Cursor pagination is O(1) seek and stable under writes.",
+    "explanationEs": "La paginación con offset tiene dos problemas: (1) el performance degrada conforme el offset crece porque la BD debe escanear y descartar filas, (2) inserciones desplazan contenido entre páginas. La paginación con cursor es O(1) y estable bajo escrituras.",
+    "starterCode": "export async function getFeed(cursor?: string) { return { items: [], nextCursor: null }; }",
+    "tags": [
+      "nextjs",
+      "prisma",
+      "pagination",
+      "infinite-scroll"
+    ],
+    "resources": [
+      {
+        "title": "Prisma cursor pagination",
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/pagination",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-9",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "titleEn": "Notification System with WebSockets",
+    "titleEs": "Sistema de Notificaciones con WebSockets",
+    "descriptionEn": "Design a real-time notification system: events (like, comment, follow), server emits, client subscribes, optimistic UI updates.",
+    "descriptionEs": "Diseña un sistema de notificaciones en tiempo real: eventos (like, comment, follow), servidor emite, cliente suscribe, UI optimista.",
+    "hintsEn": [
+      "Use Server-Sent Events (SSE) or WebSockets for real-time",
+      "Persist notifications in DB for offline users",
+      "Mark as read on view; collapse old ones"
+    ],
+    "hintsEs": [
+      "Usa Server-Sent Events (SSE) o WebSockets para tiempo real",
+      "Persiste notificaciones en BD para usuarios offline",
+      "Marca como leídas al verlas; colapsa las antiguas"
+    ],
+    "solutionEn": "Actor action -> API -> DB persist + Redis publish to user:{userId}:notifications. WS server subscribes to Redis channels and forwards to connected sockets. Client useNotifications hook with WebSocket.onmessage adds to list. Optimistic UI shows toast, unread count.",
+    "solutionEs": "API → Redis Pub/Sub → WebSocket Server → Cliente. Persistir en BD para offline. Hook con WebSocket y setState para UI optimista.",
+    "explanationEn": "The pub/sub pattern decouples the API from the WebSocket server: any service can publish a notification, and the WS server just forwards. Redis is the canonical pub/sub for multi-instance deployments. SSE is a simpler alternative if browser-native.",
+    "explanationEs": "El patrón pub/sub desacopla la API del WebSocket server: cualquier servicio puede publicar una notificación, y el WS server solo la reenvía. Redis es el pub/sub canónico para deployments multi-instancia.",
+    "tags": [
+      "realtime",
+      "websockets",
+      "redis",
+      "architecture"
+    ],
+    "resources": [
+      {
+        "title": "WebSocket API MDN",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-10",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Image Upload with Validation",
+    "titleEs": "Subida de Imágenes con Validación",
+    "descriptionEn": "Implement a secure image upload flow: client validation, server validation, virus scan, CDN storage, and signed URLs.",
+    "descriptionEs": "Implementa un flujo seguro de subida de imágenes: validación en cliente, validación en servidor, scan antivirus, almacenamiento en CDN, y URLs firmadas.",
+    "hintsEn": [
+      "Validate file type by magic bytes, not just extension",
+      "Generate pre-signed URLs so the client uploads directly to S3",
+      "Use sharp to re-encode and strip EXIF metadata"
+    ],
+    "hintsEs": [
+      "Valida el tipo de archivo por magic bytes, no solo extensión",
+      "Genera URLs pre-firmadas para que el cliente suba directo a S3",
+      "Usa sharp para re-codificar y eliminar metadatos EXIF"
+    ],
+    "solutionEn": "Server: generate S3 pre-signed URL via getSignedUrl (PutObjectCommand). Client uploads directly to S3. S3 event triggers post-processing: virus scan (ClamAV) + sharp re-encode to WebP + strip EXIF + store in processed/ folder. CDN serves the processed version.",
+    "solutionEs": "Server genera pre-signed URL → cliente sube directo a S3 → trigger de S3 invoca proceso (antivirus + sharp + re-encode WebP) → CDN sirve la versión procesada.",
+    "explanationEn": "Pre-signed URLs keep large uploads off your API server. S3 directly receives the file, then triggers a Lambda/Worker for post-processing. This pattern scales to millions of uploads and is the standard for media-heavy apps.",
+    "explanationEs": "Las pre-signed URLs mantienen las subidas grandes fuera de tu API server. S3 recibe el archivo directamente, luego dispara una Lambda/Worker para post-procesamiento. Este patrón escala a millones de subidas.",
+    "tags": [
+      "aws",
+      "s3",
+      "upload",
+      "security"
+    ],
+    "resources": [
+      {
+        "title": "AWS S3 Pre-signed URLs",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-11",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Database Schema for Social Graph",
+    "titleEs": "Schema de BD para Grafo Social",
+    "descriptionEn": "Design the Prisma schema for a social graph: users, follows, posts, likes, comments, and notifications. Include indexes for common queries.",
+    "descriptionEs": "Diseña el schema Prisma para un grafo social: users, follows, posts, likes, comments y notifications. Incluye índices para queries comunes.",
+    "hintsEn": [
+      "Use composite unique constraints to prevent duplicates",
+      "Index on foreign keys + the columns you sort by",
+      "Self-referential many-to-many for follows via an explicit Follow table"
+    ],
+    "hintsEs": [
+      "Usa composite unique constraints para prevenir duplicados",
+      "Indexa foreign keys + las columnas por las que ordenas",
+      "Many-to-many auto-referencial para follows via tabla Follow explícita"
+    ],
+    "solutionEn": "Models: User, Follow (composite unique [followerId, followingId]), Post (composite index [authorId, createdAt(sort: Desc)]), Like (unique [userId, postId]), Comment (self-ref for threading, index [postId, createdAt(sort: Desc)]), Notification (index [recipientId, read, createdAt(sort: Desc)]).",
+    "solutionEs": "Models con composite uniques, índices en FKs + columnas de ordenamiento, y relaciones explícitas. Comment auto-referencial para threading.",
+    "explanationEn": "Composite indexes (e.g., [authorId, createdAt(sort: Desc)]) are critical for the feed query: WHERE authorId = ? ORDER BY createdAt DESC. Without it, you get a full table scan.",
+    "explanationEs": "Los composite indexes (ej. [authorId, createdAt(sort: Desc)]) son críticos para la query del feed: WHERE authorId = ? ORDER BY createdAt DESC. Sin él, obtienes un escaneo completo de tabla.",
+    "tags": [
+      "prisma",
+      "schema",
+      "database",
+      "social"
+    ],
+    "resources": [
+      {
+        "title": "Prisma schema reference",
+        "url": "https://www.prisma.io/docs/orm/prisma-schema",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-12",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Prisma Transactions for Consistency",
+    "titleEs": "Transacciones Prisma para Consistencia",
+    "descriptionEn": "Use a Prisma transaction to atomically: like a post, create a notification, and update the post like count. Show the isolation level implications.",
+    "descriptionEs": "Usa una transacción Prisma para atómicamente: dar like, crear notificación, y actualizar el contador de likes. Muestra las implicaciones del nivel de aislamiento.",
+    "hintsEn": [
+      "Prisma supports $transaction with both sequential and interactive modes",
+      "Isolation level: ReadCommitted is default in Postgres",
+      "For race conditions on counters, use atomic increment (UPDATE ... SET count = count + 1)"
+    ],
+    "hintsEs": [
+      "Prisma soporta $transaction en modo secuencial e interactivo",
+      "Nivel de aislamiento: ReadCommitted es default en Postgres",
+      "Para race conditions en contadores, usa incremento atómico (UPDATE ... SET count = count + 1)"
+    ],
+    "solutionEn": "prisma.$transaction(async (tx) => { checkLike (unique constraint), create like, atomic counter via $executeRaw UPDATE Post SET likeCount = likeCount + 1, create notification (only if not self-like), return { liked: true } }, { isolationLevel: ReadCommitted, timeout: 5000 }).",
+    "solutionEs": "Transacción interactiva con tx.$executeRaw para incremento atómico del counter. Isolation level ReadCommitted. Todo en una sola transacción.",
+    "explanationEn": "The naive 'count + 1' pattern is broken under concurrency: two simultaneous likes both read count=5, both write count=6, and one increment is lost. The fix: use the database itself to do the increment (atomic). Prisma's findUnique + update is also vulnerable to TOCTOU; the unique constraint on (userId, postId) provides the dedup guarantee.",
+    "explanationEs": "El patrón naive 'count + 1' está roto bajo concurrencia: dos likes simultáneos leen count=5, ambos escriben count=6, y un incremento se pierde. La solución: usar la BD para hacer el incremento (atómico).",
+    "starterCode": "import { prisma } from '@/lib/prisma'\n\nexport async function likePost(postId: string, userId: string) { /* TODO */ }",
+    "tags": [
+      "prisma",
+      "transactions",
+      "database",
+      "concurrency"
+    ],
+    "resources": [
+      {
+        "title": "Prisma Transactions",
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/transactions",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-13",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "titleEn": "Full-Text Search with Postgres",
+    "titleEs": "Búsqueda Full-Text con Postgres",
+    "descriptionEn": "Implement full-text search for posts using Postgres tsvector. Include ranking and language-specific tokenization.",
+    "descriptionEs": "Implementa búsqueda full-text para posts usando tsvector de Postgres. Incluye ranking y tokenización específica por idioma.",
+    "hintsEn": [
+      "Postgres tsvector stores lexemes; GIN index makes search fast",
+      "Use websearch_to_tsquery for user-friendly search syntax",
+      "ts_rank orders by relevance"
+    ],
+    "hintsEs": [
+      "Postgres tsvector almacena lexemas; índice GIN hace la búsqueda rápida",
+      "Usa websearch_to_tsquery para sintaxis amigable de búsqueda",
+      "ts_rank ordena por relevancia"
+    ],
+    "solutionEn": "1) Add generated column: search_vector tsvector GENERATED ALWAYS AS to_tsvector('english', content) STORED. 2) GIN index: CREATE INDEX post_search_idx ON Post USING GIN (search_vector). 3) Query: SELECT id, content, ts_rank(search_vector, websearch_to_tsquery('english', $1)) AS rank ... ORDER BY rank DESC.",
+    "solutionEs": "Columna search_vector generada con to_tsvector, índice GIN, y query con websearch_to_tsquery + ts_rank para ranking.",
+    "explanationEn": "Postgres full-text search is a powerful built-in alternative to Elasticsearch for small-to-medium datasets. The tsvector column is automatically maintained via the GENERATED clause, and the GIN index makes search O(log n).",
+    "explanationEs": "La búsqueda full-text de Postgres es una alternativa poderosa al Elasticsearch para datasets pequeños-medianos. La columna tsvector se mantiene automáticamente, y el índice GIN hace la búsqueda O(log n).",
+    "starterCode": "export async function searchPosts(query: string) { return []; }",
+    "tags": [
+      "postgres",
+      "prisma",
+      "full-text-search",
+      "sql"
+    ],
+    "resources": [
+      {
+        "title": "Postgres Full Text Search",
+        "url": "https://www.postgresql.org/docs/current/textsearch.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-14",
+    "slug": "social-media-app",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "titleEn": "Caching with Next.js and Redis",
+    "titleEs": "Caching con Next.js y Redis",
+    "descriptionEn": "Implement a multi-layer caching strategy: in-memory LRU, Next.js Data Cache, and Redis. Show how to invalidate on mutations.",
+    "descriptionEs": "Implementa una estrategia de caché multi-capa: LRU en memoria, Next.js Data Cache, y Redis. Muestra cómo invalidar en mutaciones.",
+    "hintsEn": [
+      "Use unstable_cache or fetch with revalidate for Next.js cache",
+      "Tag-based invalidation with revalidateTag",
+      "Redis for shared cache across serverless instances"
+    ],
+    "hintsEs": [
+      "Usa unstable_cache o fetch con revalidate para Next.js cache",
+      "Invalidación basada en tags con revalidateTag",
+      "Redis para caché compartido entre instancias serverless"
+    ],
+    "solutionEn": "Layer 1: LRU (lru-cache) for hot paths. Layer 2: unstable_cache with tags for Next.js Data Cache. Layer 3: Redis with TTL for shared cache. On mutations: revalidateTag + redis.del. LRU evicts naturally on memory pressure.",
+    "solutionEs": "LRU en memoria (60s TTL), Next.js Data Cache con tags, Redis con TTL de 5 min. Invalidación en mutaciones: revalidateTag + redis.del.",
+    "explanationEn": "Caching layers trade complexity for performance. Start with Next.js Data Cache (zero config), add Redis for shared state across serverless instances, and use in-memory LRU only for hot paths. Always invalidate aggressively on writes.",
+    "explanationEs": "Las capas de caché intercambian complejidad por performance. Empieza con Next.js Data Cache (cero config), añade Redis para estado compartido entre instancias serverless, y usa LRU en memoria solo para hot paths.",
+    "tags": [
+      "nextjs",
+      "redis",
+      "caching",
+      "performance"
+    ],
+    "resources": [
+      {
+        "title": "Next.js Caching Guide",
+        "url": "https://nextjs.org/docs/app/building-your-application/caching",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-15",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Hashtag Extraction and Linking",
+    "titleEs": "Extracción y Linkeo de Hashtags",
+    "descriptionEn": "Parse post content to extract hashtags and mentions, then convert them to clickable links. Handle edge cases like nested punctuation.",
+    "descriptionEs": "Parsea el contenido del post para extraer hashtags y menciones, luego conviértelos en links clickeables. Maneja edge cases como puntuación anidada.",
+    "hintsEn": [
+      "Use Unicode-aware regex for international hashtags",
+      "Trailing punctuation should not be part of the tag",
+      "Tags must start with a letter (Unicode)"
+    ],
+    "hintsEs": [
+      "Usa regex Unicode-aware para hashtags internacionales",
+      "La puntuación final no debe ser parte del tag",
+      "Los tags deben empezar con una letra (Unicode)"
+    ],
+    "solutionEn": "Regex: /[\\p{L}\\p{N}_]+/gu for Unicode tags. extractTags uses match, dedupe with Set, lowercase. linkifyContent replaces with <a> tags. Sanitize with DOMPurify before rendering. Edge case: 'Hello,#world!' correctly extracts 'world' not 'world!'.",
+    "solutionEs": "Regex Unicode-aware con flag u, normalización a lowercase, dedupe con Set, linkify con reemplazo preservando el match. Sanitizar con DOMPurify antes de renderizar.",
+    "explanationEn": "The regex \\p{L}\\p{N} matches any Unicode letter or digit, supporting tags in Spanish, Chinese, Arabic, etc. The 'u' flag enables Unicode mode. Edge cases: avoid matching # in the middle of a word, but allow it at the start.",
+    "explanationEs": "La regex \\p{L}\\p{N} matchea cualquier letra o dígito Unicode, soportando tags en español, chino, árabe, etc. La flag u habilita modo Unicode. Edge cases: evitar matchear # en medio de una palabra, pero permitirlo al inicio.",
+    "starterCode": "export function extractTags(content: string): string[] { return []; }",
+    "tags": [
+      "regex",
+      "unicode",
+      "parsing"
+    ],
+    "resources": [
+      {
+        "title": "Twitter hashtag spec",
+        "url": "https://github.com/twitter/twitter-text",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sma-16",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Rate Limiting for Social Actions",
+    "titleEs": "Rate Limiting para Acciones Sociales",
+    "descriptionEn": "Implement rate limiting for like, comment, and post actions. Different limits for different actions, sliding window per user.",
+    "descriptionEs": "Implementa rate limiting para acciones de like, comment, y post. Límites diferentes para acciones diferentes, sliding window por usuario.",
+    "hintsEn": [
+      "Use Redis sorted sets with timestamps as scores",
+      "Different actions have different limits: 60 likes/min, 30 comments/min, 10 posts/min",
+      "Throw a specific error type so the UI can show a friendly message"
+    ],
+    "hintsEs": [
+      "Usa sorted sets de Redis con timestamps como scores",
+      "Diferentes acciones tienen diferentes límites: 60 likes/min, 30 comments/min, 10 posts/min",
+      "Lanza un tipo de error específico para que la UI muestre un mensaje amigable"
+    ],
+    "solutionEn": "LIMITS map by action. Redis sorted set with timestamps. Lua script for atomic ZREMRANGEBYSCORE + ZCARD + ZADD. Custom RateLimitError class. Per-user check before action. Returns resetAt for UI.",
+    "solutionEs": "Tabla de límites por acción, Redis sorted set con timestamps, script Lua atómico, error tipado para que la UI muestre 'intenta de nuevo en X segundos'.",
+    "explanationEn": "Rate limits per user, per action, with a sliding window in Redis. The Lua script ensures atomicity (check + add in one round-trip). Throwing a typed error lets the client UI handle it gracefully.",
+    "explanationEs": "Rate limits por usuario, por acción, con ventana deslizante en Redis. El script Lua asegura atomicidad. Lanzar un error tipado permite que la UI cliente lo maneje con gracia.",
+    "starterCode": "export async function checkRateLimit(userId: string, action: string): Promise<void> { /* TODO */ }",
+    "tags": [
+      "rate-limiting",
+      "redis",
+      "backend"
+    ],
+    "resources": [
+      {
+        "title": "Redis sliding window rate limiter",
+        "url": "https://redis.io/glossary/rate-limiting/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sma-17",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "OAuth 2.0 with NextAuth.js",
+    "titleEs": "OAuth 2.0 con NextAuth.js",
+    "descriptionEn": "Set up NextAuth.js with Google and GitHub providers in a Next.js 14+ app. Configure the session strategy and protected routes.",
+    "descriptionEs": "Configura NextAuth.js con providers de Google y GitHub en una app Next.js 14+. Configura la estrategia de sesión y rutas protegidas.",
+    "hintsEn": [
+      "Use middleware to protect routes",
+      "JWT strategy is faster but database strategy lets you invalidate sessions",
+      "Add a custom callback to sync user with your DB on first login"
+    ],
+    "hintsEs": [
+      "Usa middleware para proteger rutas",
+      "Estrategia JWT es más rápida pero DB permite invalidar sesiones",
+      "Añade un callback custom para sincronizar el usuario con tu BD en el primer login"
+    ],
+    "solutionEn": "NextAuth with Google + GitHub providers. session.strategy: 'jwt'. Callbacks: signIn (upsert user in DB), jwt (inject userId), session (add userId to session). middleware.ts checks req.auth for protected routes, redirects to /login if missing.",
+    "solutionEs": "NextAuth con providers Google/GitHub, callback signIn para upsert en BD, jwt para inyectar userId, middleware matcher para rutas protegidas.",
+    "explanationEn": "JWT strategy stores the session in a cookie, decoded on each request. It's fast but cannot be revoked server-side. Database strategy stores session IDs in the DB, allowing revocation, but adds a DB query per request.",
+    "explanationEs": "La estrategia JWT almacena la sesión en una cookie, decodificada en cada request. Es rápida pero no se puede revocar del lado del servidor. La estrategia DB almacena IDs en la BD, permitiendo revocación.",
+    "starterCode": "export const authConfig = { providers: [] }",
+    "tags": [
+      "nextauth",
+      "oauth",
+      "auth",
+      "nextjs"
+    ],
+    "resources": [
+      {
+        "title": "NextAuth.js docs",
+        "url": "https://authjs.dev/getting-started",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-18",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "titleEn": "Server-Side Rendering vs RSC",
+    "titleEs": "SSR vs RSC",
+    "descriptionEn": "Explain the difference between traditional Server-Side Rendering (getServerSideProps) and React Server Components in Next.js 14+.",
+    "descriptionEs": "Explica la diferencia entre Server-Side Rendering tradicional (getServerSideProps) y React Server Components en Next.js 14+.",
+    "hintsEn": [
+      "SSR renders the full page on the server and hydrates on the client",
+      "RSC streams the HTML; the client hydrates only interactive components",
+      "RSC can use async/await directly; SSR cannot"
+    ],
+    "hintsEs": [
+      "SSR renderiza la página completa en el servidor e hidrata en el cliente",
+      "RSC transmite el HTML; el cliente hidrata solo los componentes interactivos",
+      "RSC puede usar async/await directamente; SSR no"
+    ],
+    "solutionEn": "Traditional SSR: getServerSideProps runs on server, full page hydrated on client (all components have JS). RSC: server renders HTML stream, only Client Components hydrate, Server Components send zero JS. RSC supports async/await directly. Streaming with Suspense.",
+    "solutionEs": "SSR renderiza todo y envía todo el JS al cliente. RSC renderiza en el servidor sin enviar JS de los Server Components, y solo hidrata los Client Components interactivos.",
+    "explanationEn": "RSC is a fundamental shift: the server can render components without sending their JS, and the client only hydrates what's interactive. This is why RSC apps feel faster: less JS to download, parse, and execute.",
+    "explanationEs": "RSC es un cambio fundamental: el servidor puede renderizar componentes sin enviar su JS, y el cliente solo hidrata lo interactivo. Por eso las apps RSC se sienten más rápidas: menos JS para descargar y ejecutar.",
+    "tags": [
+      "nextjs",
+      "rsc",
+      "ssr",
+      "react"
+    ],
+    "resources": [
+      {
+        "title": "React Server Components RFC",
+        "url": "https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sma-19",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Prisma Aggregations for Analytics",
+    "titleEs": "Agregaciones Prisma para Analíticas",
+    "descriptionEn": "Write Prisma queries for: daily active users, top 10 hashtags, and engagement rate per post.",
+    "descriptionEs": "Escribe queries Prisma para: usuarios activos diarios, top 10 hashtags, y engagement rate por post.",
+    "hintsEn": [
+      "Prisma supports groupBy, aggregate, and raw queries",
+      "For Postgres-specific features use $queryRaw",
+      "Engagement rate = (likes + comments) / impressions"
+    ],
+    "hintsEs": [
+      "Prisma soporta groupBy, aggregate, y queries raw",
+      "Para features específicas de Postgres usa $queryRaw",
+      "Engagement rate = (likes + comments) / impressions"
+    ],
+    "solutionEn": "DAU: $queryRaw with date_trunc('day', createdAt) + COUNT(DISTINCT userId). Top hashtags: prisma.postTag.groupBy({ by: ['tag'], _count: { tag: true } }). Engagement: $queryRaw with correlated subqueries and CASE to avoid division by zero.",
+    "solutionEs": "DAU con date_trunc + COUNT(DISTINCT). Top hashtags con groupBy + _count. Engagement rate con subqueries correlacionadas y CASE.",
+    "explanationEn": "Prisma's groupBy covers most analytics, but Postgres-specific features (date_trunc, window functions) require $queryRaw. The CASE in the engagement rate query prevents division by zero.",
+    "explanationEs": "El groupBy de Prisma cubre la mayoría de analíticas, pero features específicas de Postgres (date_trunc, window functions) requieren $queryRaw. El CASE previene división por cero.",
+    "starterCode": "export async function getDailyActiveUsers() { return []; }",
+    "tags": [
+      "prisma",
+      "analytics",
+      "sql"
+    ],
+    "resources": [
+      {
+        "title": "Prisma aggregations",
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/aggregation-grouping-summarizing",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-20",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Image Lazy Loading Strategies",
+    "titleEs": "Estrategias de Lazy Loading de Imágenes",
+    "descriptionEn": "Implement progressive image loading: blur placeholder (LQIP), native lazy loading, and IntersectionObserver for above-the-fold detection.",
+    "descriptionEs": "Implementa carga progresiva de imágenes: placeholder blur (LQIP), lazy loading nativo, e IntersectionObserver para detección above-the-fold.",
+    "hintsEn": [
+      "Generate a tiny base64 LQIP (5-10px wide) at upload time",
+      "Use loading='lazy' for native lazy loading",
+      "IntersectionObserver for custom placeholders that fade in on view"
+    ],
+    "hintsEs": [
+      "Genera un LQIP base64 tiny (5-10px) al subir",
+      "Usa loading='lazy' para lazy loading nativo",
+      "IntersectionObserver para placeholders custom que aparecen al ver"
+    ],
+    "solutionEn": "ProgressiveImage component: 1) Always visible LQIP with blur. 2) Real image loads when inView (rootMargin: 200px for pre-load). 3) Generate LQIP at upload via sharp (10x10 JPEG, 30% quality). 4) Transition opacity when loaded.",
+    "solutionEs": "LQIP generado con sharp al subir (10x10 JPEG), IntersectionObserver con rootMargin: 200px para pre-load, transition de opacidad al cargar.",
+    "explanationEn": "LQIP (Low Quality Image Placeholder) provides an instant visual hint while the real image loads. The blur is so heavy that the tiny 10x10 image looks like a smooth color block. Combined with native lazy loading and IntersectionObserver, this is the optimal pattern.",
+    "explanationEs": "LQIP (Low Quality Image Placeholder) da una pista visual instantánea mientras se carga la imagen real. El blur es tan fuerte que la imagen tiny 10x10 parece un bloque de color suave.",
+    "starterCode": "export function ProgressiveImage({ src, alt }: { src: string; alt: string }) { return <img src={src} alt={alt} />; }",
+    "tags": [
+      "react",
+      "performance",
+      "images",
+      "ux"
+    ],
+    "resources": [
+      {
+        "title": "web.dev LQIP guide",
+        "url": "https://web.dev/articles/lcp-lazy-loading",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "sma-21",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "titleEn": "Prisma Migrations Best Practices",
+    "titleEs": "Mejores Prácticas de Migraciones Prisma",
+    "descriptionEn": "Show the workflow for adding a new column to a large table: shadow migration, expand-contract pattern, and zero-downtime deployment.",
+    "descriptionEs": "Muestra el flujo para añadir una nueva columna a una tabla grande: shadow migration, patrón expand-contract, y deployment sin downtime.",
+    "hintsEn": [
+      "Never modify a deployed migration; create a new one",
+      "Add column as nullable first, populate it, then make it required",
+      "Use CONCURRENTLY for index creation on large tables"
+    ],
+    "hintsEs": [
+      "Nunca modifiques una migración desplegada; crea una nueva",
+      "Añade la columna como nullable primero, llénala, luego hazla required",
+      "Usa CONCURRENTLY para creación de índices en tablas grandes"
+    ],
+    "solutionEn": "Expand-Contract: 1) Add column nullable + index CONCURRENTLY. 2) Backfill in batches of 1000. 3) Make column NOT NULL in new migration. Each step is a separate deployable migration. Critical for zero-downtime.",
+    "solutionEs": "3 fases: Expand (columna nullable + índice CONCURRENTLY), Backfill (en batches), Contract (SET NOT NULL). Cada fase es una migración desplegable independientemente.",
+    "explanationEn": "Direct ALTER TABLE on a large table locks writes for the duration of the migration (which can be hours for millions of rows). The expand-contract pattern lets you deploy code that tolerates both old and new schemas while the migration runs in the background.",
+    "explanationEs": "ALTER TABLE directo en una tabla grande bloquea escrituras durante toda la migración. El patrón expand-contract permite desplegar código que tolera ambos schemas mientras la migración corre en background.",
+    "tags": [
+      "prisma",
+      "migrations",
+      "database",
+      "devops"
+    ],
+    "resources": [
+      {
+        "title": "Prisma Migrate",
+        "url": "https://www.prisma.io/docs/orm/prisma-migrate",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-22",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Form Validation with React Hook Form + Zod",
+    "titleEs": "Validación de Formularios con React Hook Form + Zod",
+    "descriptionEn": "Build a complete post creation form with React Hook Form, Zod schema, error display, and Server Action submission.",
+    "descriptionEs": "Construye un formulario completo de creación de posts con React Hook Form, schema Zod, display de errores, y envío via Server Action.",
+    "hintsEn": [
+      "Use zodResolver to integrate Zod with RHF",
+      "Server Action signature: (prevState, formData) => newState",
+      "useActionState is the React 19 hook for this"
+    ],
+    "hintsEs": [
+      "Usa zodResolver para integrar Zod con RHF",
+      "Firma del Server Action: (prevState, formData) => newState",
+      "useActionState es el hook de React 19 para esto"
+    ],
+    "solutionEn": "useForm({ resolver: zodResolver(PostSchema) }). useActionState for server state. Form uses formAction. Errors from RHF (client-side) + serverState.error (server-side). Reset on success.",
+    "solutionEs": "RHF con zodResolver, useActionState de React 19, errores se muestran desde errors (cliente) y serverState.error (servidor). Reset tras éxito.",
+    "explanationEn": "RHF handles client-side validation and form state. Zod provides a single schema that's reused on the server. The Server Action receives formData and returns a State object that useActionState tracks. The result: type-safe end-to-end validation with minimal code.",
+    "explanationEs": "RHF maneja validación cliente y estado del form. Zod provee un solo schema reusado en el servidor. El Server Action recibe formData y retorna un State que useActionState trackea.",
+    "starterCode": "import { useForm } from 'react-hook-form'\n\nexport function NewPostForm() { return <form></form>; }",
+    "tags": [
+      "react",
+      "forms",
+      "zod",
+      "rhf"
+    ],
+    "resources": [
+      {
+        "title": "React Hook Form + Zod",
+        "url": "https://react-hook-form.com/get-started#SchemaValidation",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-23",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "Profile Page with RSC + Streaming",
+    "titleEs": "Página de Perfil con RSC + Streaming",
+    "descriptionEn": "Build a user profile page using Server Components with streaming: header loads first, then posts, then suggestions in parallel.",
+    "descriptionEs": "Construye una página de perfil con Server Components y streaming: header carga primero, luego posts, luego sugerencias en paralelo.",
+    "hintsEn": [
+      "Use Suspense boundaries to enable streaming",
+      "Server Components can be async; await directly in the component",
+      "Each Suspense boundary streams independently"
+    ],
+    "hintsEs": [
+      "Usa boundaries Suspense para habilitar streaming",
+      "Los Server Components pueden ser async; await directo en el componente",
+      "Cada boundary Suspense transmite independientemente"
+    ],
+    "solutionEn": "Page is async Server Component. Each block wrapped in Suspense with fallback. Data fetched in parallel, HTML streams as each block completes. ProfileHeader, PostsList, Suggestions all independent.",
+    "solutionEs": "Page es Server Component async. Cada bloque va envuelto en <Suspense fallback>. Los datos se cargan en paralelo; el HTML se transmite al cliente en cuanto cada bloque está listo.",
+    "explanationEn": "Suspense + RSC enables HTML streaming: the server sends the header as soon as the user query finishes, then sends posts and suggestions as their queries complete. The user sees content progressively, not a blank page waiting for everything.",
+    "explanationEs": "Suspense + RSC habilita streaming HTML: el servidor envía el header en cuanto la query del usuario termina, luego envía posts y sugerencias conforme completan. El usuario ve contenido progresivamente.",
+    "starterCode": "export default async function ProfilePage({ params }: { params: { username: string } }) { return <div>Profile: {params.username}</div>; }",
+    "tags": [
+      "rsc",
+      "suspense",
+      "streaming",
+      "nextjs"
+    ],
+    "resources": [
+      {
+        "title": "Next.js Streaming",
+        "url": "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-24",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "titleEn": "Accessibility for Dynamic Content",
+    "titleEs": "Accesibilidad para Contenido Dinámico",
+    "descriptionEn": "Make a dynamic feed accessible: ARIA live regions, focus management on new posts, keyboard navigation.",
+    "descriptionEs": "Haz un feed dinámico accesible: regiones ARIA live, manejo de foco en nuevos posts, navegación por teclado.",
+    "hintsEn": [
+      "aria-live='polite' announces new content without interrupting",
+      "Manage focus when a modal opens or new content loads",
+      "All interactive elements must be keyboard-accessible"
+    ],
+    "hintsEs": [
+      "aria-live='polite' anuncia contenido nuevo sin interrumpir",
+      "Maneja el foco cuando un modal abre o contenido nuevo carga",
+      "Todos los elementos interactivos deben ser accesibles por teclado"
+    ],
+    "solutionEn": "5 patterns: 1) role=feed + aria-labelledby on articles, aria-live='polite' for loading announcements. 2) Focus new posts only if scrolled to bottom. 3) aria-pressed on like buttons, sr-only state text. 4) Skip link. 5) motion-reduce for animations.",
+    "solutionEs": "5 patrones: aria-live polite para anuncios, focus management con guard de scroll, aria-pressed y aria-label en botones, skip link, motion-reduce para animaciones.",
+    "explanationEn": "Accessibility for dynamic content is about announcing changes to screen readers, not surprising users with focus jumps, and providing keyboard alternatives. ARIA is the bridge between dynamic DOM and assistive tech.",
+    "explanationEs": "La accesibilidad para contenido dinámico se trata de anunciar cambios a screen readers, no sorprender con saltos de foco, y dar alternativas de teclado. ARIA es el puente entre el DOM dinámico y la tecnología asistiva.",
+    "tags": [
+      "a11y",
+      "aria",
+      "keyboard",
+      "react"
+    ],
+    "resources": [
+      {
+        "title": "WAI-ARIA Authoring Practices",
+        "url": "https://www.w3.org/WAI/ARIA/apg/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "sma-25",
+    "slug": "social-media-app",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "titleEn": "WebSocket Reconnection Strategies",
+    "titleEs": "Estrategias de Reconexión WebSocket",
+    "descriptionEn": "Implement a robust WebSocket client with exponential backoff, heartbeat, and message queueing during disconnects.",
+    "descriptionEs": "Implementa un cliente WebSocket robusto con backoff exponencial, heartbeat, y queueing de mensajes durante desconexiones.",
+    "hintsEn": [
+      "Use exponential backoff: 1s, 2s, 4s, 8s, capped at 30s",
+      "Send ping every 30s; consider disconnected if no pong in 60s",
+      "Buffer outbound messages while disconnected; flush on reconnect"
+    ],
+    "hintsEs": [
+      "Usa backoff exponencial: 1s, 2s, 4s, 8s, cap a 30s",
+      "Envía ping cada 30s; considera desconectado si no hay pong en 60s",
+      "Buffer de mensajes salientes mientras desconectado; flush al reconectar"
+    ],
+    "solutionEn": "Class ResilientWebSocket: connect() opens WS, onopen resets retry delay, starts heartbeat, flushes queue. onclose schedules reconnect with exponential backoff (max 30s). send() buffers if disconnected. Heartbeat sends ping every 30s.",
+    "solutionEs": "Backoff exponencial 1s→30s con reset al conectar, heartbeat cada 30s, queue de mensajes durante desconexión, flush al reconectar.",
+    "explanationEn": "Exponential backoff prevents thundering-herd reconnections. The heartbeat detects zombie connections (TCP says open but the other end is gone). Message queueing lets users continue working offline; the messages send when reconnected.",
+    "explanationEs": "El backoff exponencial previene reconexiones en estampida. El heartbeat detecta conexiones zombie (TCP dice open pero el otro extremo está muerto). El queue permite seguir trabajando offline.",
+    "starterCode": "export class ResilientWebSocket { /* TODO */ }",
+    "tags": [
+      "websocket",
+      "realtime",
+      "resilience"
+    ],
+    "resources": [
+      {
+        "title": "MDN WebSocket",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket",
+        "type": "documentation"
+      }
+    ]
+  }
+]

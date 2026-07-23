@@ -30,6 +30,13 @@ export interface Resource {
   type: 'documentation' | 'tutorial' | 'article' | 'video'
 }
 
+import { extraPasswordManagerQuestions } from './extra-questions-pm'
+import { extraSocialMediaQuestions } from './extra-questions-sma'
+import { extraMultiplayerGameQuestions } from './extra-questions-mmg'
+import { extraEcommerceQuestions } from './extra-questions-ecom'
+import { extraHermitBarQuestions } from './extra-questions-hb'
+import { extraTechQuestions } from './extra-questions-tech'
+
 export const mockQuestions: Question[] = [
   {
     id: 'pm-1',
@@ -932,6 +939,24 @@ export const mockQuestions: Question[] = [
     solutionEs: '**Pipeline CI/CD**\n\n1. **Lint**: Verificar código\n2. **Test**: Correr tests\n3. **Build**: Compilar aplicación\n4. **Deploy**: Desplegar a producción',
   },
 ]
+
+export { extraPasswordManagerQuestions } from './extra-questions-pm'
+export { extraSocialMediaQuestions } from './extra-questions-sma'
+export { extraMultiplayerGameQuestions } from './extra-questions-mmg'
+export { extraEcommerceQuestions } from './extra-questions-ecom'
+export { extraHermitBarQuestions } from './extra-questions-hb'
+export { extraTechQuestions } from './extra-questions-tech'
+
+;(() => {
+  mockQuestions.push(
+    ...extraPasswordManagerQuestions,
+    ...extraSocialMediaQuestions,
+    ...extraMultiplayerGameQuestions,
+    ...extraEcommerceQuestions,
+    ...extraHermitBarQuestions,
+    ...extraTechQuestions
+  )
+})()
 
 export function getQuestionsBySlug(slug: string): Question[] {
   return mockQuestions.filter(q => q.slug === slug)

@@ -1,0 +1,846 @@
+[
+  {
+    "id": "ecom-4",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Shopping Cart with Hybrid Persistence",
+    "titleEs": "Carrito de Compras con Persistencia Híbrida",
+    "descriptionEn": "Design a shopping cart that persists across sessions: localStorage for guests, server DB for logged-in users, and merge on login.",
+    "descriptionEs": "Diseña un carrito de compras que persista entre sesiones: localStorage para invitados, BD del servidor para usuarios logueados, y merge al login.",
+    "difficulty": "senior",
+    "type": "coding",
+    "points": 100,
+    "language": "typescript",
+    "hintsEn": [
+      "localStorage for guest carts is fast and offline-capable",
+      "On login, merge guest cart with server cart (prefer higher quantity)",
+      "Use a unique line item id to deduplicate"
+    ],
+    "hintsEs": [
+      "localStorage para carritos de invitados es rápido y offline-capable",
+      "Al login, merge del carrito invitado con el del servidor (preferir mayor cantidad)",
+      "Usa un id único por línea para deduplicar"
+    ],
+    "solutionEn": "Use localStorage for guest cart with a useCart hook that handles both modes. On login, read both carts, merge by productId preferring max quantity, then persist the merged result to server and clear the local guest cart.\n\nKey patterns:\n- `useEffect` to load the appropriate cart when userId changes\n- `useCallback` for memoized addItem/removeItem\n- `prisma.$transaction` for atomic server-side cart updates\n- `Map<string, CartItem>` for O(1) merge lookup",
+    "solutionEs": "localStorage para invitados, server DB para usuarios, merge al login prefiriendo mayor cantidad por producto. Hook de React con optimistic update.",
+    "explanationEn": "The hybrid approach gives guests a fast offline experience and logged-in users reliable sync. The merge logic must handle duplicates carefully: by productId+variantId, take the max quantity, sum the prices (with the latest price winning).",
+    "explanationEs": "El enfoque híbrido da a invitados una experiencia offline rápida y a usuarios logueados sync confiable. El merge debe manejar duplicados: por productId+variantId, tomar la cantidad máxima.",
+    "starterCode": "export function useCart() { /* TODO */ return { items: [], addItem: () => {} }; }",
+    "tags": [
+      "cart",
+      "localStorage",
+      "state-sync"
+    ],
+    "resources": [
+      {
+        "title": "MDN localStorage",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-5",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Inventory Reservation System",
+    "titleEs": "Sistema de Reserva de Inventario",
+    "descriptionEn": "Design an inventory reservation system: when items are added to cart, reserve stock for 10 minutes. Release if checkout is abandoned.",
+    "descriptionEs": "Diseña un sistema de reserva de inventario: al añadir al carrito, reserva stock por 10 minutos. Libera si el checkout se abandona.",
+    "difficulty": "senior",
+    "type": "coding",
+    "points": 100,
+    "language": "typescript",
+    "hintsEn": [
+      "Use a reservation table with expiresAt timestamp",
+      "Background job releases expired reservations",
+      "Atomic decrement on checkout completion"
+    ],
+    "hintsEs": [
+      "Usa una tabla de reservas con timestamp expiresAt",
+      "Job en background libera reservas expiradas",
+      "Decremento atómico al completar checkout"
+    ],
+    "solutionEn": "StockReservation table with productId, cartId, quantity, expiresAt. Available stock = physical - SUM(active reservations). On add to cart, create a reservation with expiresAt = now+10min. On checkout, transactional decrement + delete reservations. setInterval every 60s deletes expired reservations.\n\nKey patterns:\n- `prisma.$transaction` for atomic reserve/checkout\n- `prisma.$executeRaw` for atomic SQL updates\n- `expiresAt: { gt: new Date() }` for active reservations\n- TTL via `setInterval` cleanup",
+    "solutionEs": "Tabla de reservas con expiresAt, available = stock - reservas activas, atomic decrement en checkout, cleanup job cada minuto.",
+    "explanationEn": "Reservations prevent overselling: two users add the last item to cart, only the first to checkout wins. The TTL prevents stock from being held indefinitely by abandoned carts. The cleanup job is a safety net for crashed servers.",
+    "explanationEs": "Las reservas previenen sobreventa: dos usuarios añaden el último item al carrito, solo el primero que paga gana. El TTL previene que el stock quede retenido por carritos abandonados.",
+    "starterCode": "async function getAvailableStock(productId: string): Promise<number> { return 0; }",
+    "tags": [
+      "inventory",
+      "transactions",
+      "prisma"
+    ],
+    "resources": [
+      {
+        "title": "Inventory management patterns",
+        "url": "https://martinfowler.com/eaaCatalog/aggregatedRoot.html",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-6",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Hold Orders with Temporary Storage",
+    "titleEs": "Órdenes en Espera con Almacenamiento Temporal",
+    "descriptionEn": "Design hold orders: a cashier starts an order, scans items, holds it for 30 min, then resumes on another terminal. Show the data model.",
+    "descriptionEs": "Diseña órdenes en espera: un cajero inicia una orden, escanea items, la pone en espera por 30 min, luego la resume en otro terminal. Muestra el modelo de datos.",
+    "difficulty": "senior",
+    "type": "conceptual",
+    "points": 100,
+    "hintsEn": [
+      "Status field: draft, held, completed, voided",
+      "Store line items as a JSON column or separate table",
+      "Cleanup job removes held orders older than 30 days"
+    ],
+    "hintsEs": [
+      "Campo status: draft, held, completed, voided",
+      "Almacena line items como columna JSON o tabla separada",
+      "Job de limpieza remueve órdenes en hold más antiguas que 30 días"
+    ],
+    "solutionEn": "HoldOrder model with status enum (draft/held/completed/voided), items as JSON, branchId/terminalId/cashierId, expiresAt for cleanup, version column for optimistic locking. Concurrency: reject updates if version mismatch. Multi-terminal: WebSocket broadcasts order updates to all terminals in the branch.",
+    "solutionEs": "HoldOrder con status (draft/held/completed/voided), items en JSON, expiresAt para cleanup, optimistic locking con version, WebSocket para sync multi-terminal.",
+    "explanationEn": "Hold orders need a soft delete pattern (status field, not actual delete) because they may be resumed. Multi-terminal sync is critical: the cashier expects to see the same order from any device in the branch.",
+    "explanationEs": "Las órdenes en hold necesitan un patrón de soft delete (campo status, no delete real) porque pueden resumirse. El sync multi-terminal es crítico: el cajero espera ver la misma orden desde cualquier dispositivo de la sucursal.",
+    "tags": [
+      "pos",
+      "data-modeling",
+      "prisma"
+    ],
+    "resources": [
+      {
+        "title": "Square POS architecture",
+        "url": "https://developer.squareup.com/docs/pos-api",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-7",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "End-of-Day Reconciliation",
+    "titleEs": "Reconciliación de Fin de Día",
+    "descriptionEn": "Design end-of-day reconciliation: total sales, expected cash drawer, payment method breakdown, discrepancy reporting.",
+    "descriptionEs": "Diseña la reconciliación de fin de día: total de ventas, efectivo esperado en caja, desglose por método de pago, reporte de discrepancias.",
+    "difficulty": "senior",
+    "type": "conceptual",
+    "points": 100,
+    "hintsEn": [
+      "Sum completed sales for the day",
+      "Cash expected = opening cash + cash sales - cash refunds",
+      "Compare to counted cash, flag discrepancies > $5"
+    ],
+    "hintsEs": [
+      "Suma ventas completadas del día",
+      "Efectivo esperado = apertura + ventas en efectivo - reembolsos en efectivo",
+      "Compara con efectivo contado, marca discrepancias > $5"
+    ],
+    "solutionEn": "DailyReport aggregating: gross/net totals, payment method breakdown (groupBy by method), hourly sales distribution, per-cashier totals, voided orders, cash drawer reconciliation (opening + cash sales - cash refunds), and automated flags for high void count or cash discrepancy > $5. Workflow: cashier clicks Close Register, system generates report, cashier counts cash, system flags discrepancies, manager approves.",
+    "solutionEs": "Reporte con totales, desglose por método de pago, by hour, by cashier, voided, cash drawer (opening + cash sales - refunds), flags automáticas.",
+    "explanationEn": "Reconciliation is the financial backbone of retail. Discrepancies can indicate theft, errors, or system bugs. The report is also used for tax purposes and to track employee performance (sales per cashier, void rates).",
+    "explanationEs": "La reconciliación es la columna vertebral financiera del retail. Las discrepancias pueden indicar robo, errores, o bugs. El reporte también se usa para impuestos y para rastrear performance de empleados.",
+    "tags": [
+      "pos",
+      "reporting",
+      "accounting"
+    ],
+    "resources": [
+      {
+        "title": "POS reconciliation best practices",
+        "url": "https://www.nacha.org/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-8",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Multiple Payment Methods Switch",
+    "titleEs": "Conmutación de Múltiples Métodos de Pago",
+    "descriptionEn": "Design a payment flow that supports split payments: cash + card, two cards, gift card + cash. Handle partial refunds.",
+    "descriptionEs": "Diseña un flujo de pago que soporte pagos divididos: efectivo + tarjeta, dos tarjetas, gift card + efectivo. Maneja reembolsos parciales.",
+    "difficulty": "senior",
+    "type": "coding",
+    "points": 100,
+    "language": "typescript",
+    "hintsEn": [
+      "Sale has many Payments, each with method and amount",
+      "Validate sum of payments equals sale total",
+      "Refunds distribute across original payment methods"
+    ],
+    "hintsEs": [
+      "Sale tiene muchos Payments, cada uno con método y monto",
+      "Valida que la suma de pagos sea igual al total de la venta",
+      "Los reembolsos se distribuyen entre los métodos originales"
+    ],
+    "solutionEn": "Sale (1:N) Payment schema, each Payment has method (cash/credit_card/gift_card) and amount. Validation: sum(payments.amount) must equal sale.total. Partial refunds distribute proportionally: refundAmount * (payment.amount / sale.total). Transaction wraps all updates for atomicity. Use status field: completed/partially_refunded/refunded.",
+    "solutionEs": "Schema con Sale → Payments (1:N) y Refunds, suma de pagos validada, refunds proporcionales a los pagos originales.",
+    "explanationEn": "Split payments and partial refunds are the most error-prone areas of POS. The proportional distribution is one valid strategy; another is LIFO (refund to most recent payment first) or manual (let the cashier choose).",
+    "explanationEs": "Los pagos divididos y reembolsos parciales son las áreas más propensas a errores en POS. La distribución proporcional es una estrategia válida; otra es LIFO o manual.",
+    "starterCode": "export async function completeSale(saleId: string, payments: Array<{ method: string; amount: number }>) { /* TODO */ }",
+    "tags": [
+      "pos",
+      "payments",
+      "transactions"
+    ],
+    "resources": [
+      {
+        "title": "Stripe split payments",
+        "url": "https://stripe.com/docs/connect/destination-charges",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-9",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "POS Offline Mode",
+    "titleEs": "Modo Offline del POS",
+    "descriptionEn": "Design an offline-capable POS: cache products locally, queue sales, sync when connection is restored.",
+    "descriptionEs": "Diseña un POS offline-capable: cachea productos localmente, encola ventas, sincroniza cuando se restaura la conexión.",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "hintsEn": [
+      "Use IndexedDB for product cache and pending sales",
+      "Service Worker for offline detection",
+      "Sync queue with conflict resolution"
+    ],
+    "hintsEs": [
+      "Usa IndexedDB para caché de productos y ventas pendientes",
+      "Service Worker para detección offline",
+      "Cola de sync con resolución de conflictos"
+    ],
+    "solutionEn": "Service Worker intercepts fetches and serves from cache when offline. IndexedDB (via idb library) stores products cache and pendingSales queue. Online/offline events trigger sync. Each pending sale has a localId; on sync, server uses upsert by client-generated ID for idempotency. Failures: keep in queue, retry next sync.",
+    "solutionEs": "Service Worker para offline, IndexedDB para productos y pending sales, sync queue con conflict handling al volver online.",
+    "explanationEn": "Offline POS is critical for retail: a network outage cannot stop checkout. The sync must be idempotent (server uses upsert by client-generated ID) and handle conflicts (e.g., product was deleted server-side).",
+    "explanationEs": "El POS offline es crítico para retail: un corte de red no puede detener el checkout. El sync debe ser idempotente y manejar conflictos (ej. producto eliminado del servidor).",
+    "starterCode": "export function useOfflinePOS() { return { online: true, cacheProduct: () => {}, createLocalSale: () => {} }; }",
+    "tags": [
+      "pwa",
+      "offline",
+      "pos"
+    ],
+    "resources": [
+      {
+        "title": "PWA offline patterns",
+        "url": "https://web.dev/offline-cookbook/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-10",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Receipt Generation and Printing",
+    "titleEs": "Generación e Impresión de Recibos",
+    "descriptionEn": "Design receipt generation: thermal printer (ESC/POS), PDF, email. Show the data model and a printable HTML template.",
+    "descriptionEs": "Diseña la generación de recibos: impresora térmica (ESC/POS), PDF, email. Muestra el modelo de datos y una plantilla HTML imprimible.",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "hintsEn": [
+      "ESC/POS commands are sent via Web Bluetooth, USB, or network",
+      "PDF can be generated client-side with jsPDF or server-side with Puppeteer",
+      "Email receipts need HTML template with inline CSS"
+    ],
+    "hintsEs": [
+      "Comandos ESC/POS se envían vía Web Bluetooth, USB, o red",
+      "PDF puede generarse client-side con jsPDF o server-side con Puppeteer",
+      "Recibos por email necesitan plantilla HTML con CSS inline"
+    ],
+    "solutionEn": "Three formats: 1) Thermal printer via EscPosBuilder (byte array of ESC/POS commands) sent through Web Bluetooth or WebUSB. 2) PDF with jsPDF (80mm thermal width, mm units). 3) Email with React Email template using inline CSS. Common Receipt model: saleId, items, totals, generatedAt, format (thermal/pdf/email), sentTo.",
+    "solutionEs": "EscPosBuilder con bytes ESC/POS, impresión vía Web Bluetooth/USB, PDF con jsPDF en formato 80mm térmico.",
+    "explanationEn": "ESC/POS is the de facto standard for thermal receipt printers. The commands are simple byte sequences. For modern web apps, Web Bluetooth API lets you print directly from the browser without a native app.",
+    "explanationEs": "ESC/POS es el estándar de facto para impresoras térmicas de recibos. Los comandos son secuencias simples de bytes. Para apps web modernas, la Web Bluetooth API permite imprimir directamente desde el navegador.",
+    "starterCode": "export class EscPosBuilder { /* TODO */ }",
+    "tags": [
+      "pos",
+      "printing",
+      "escpos"
+    ],
+    "resources": [
+      {
+        "title": "ESC/POS command reference",
+        "url": "https://reference.epson-biz.com/modules/ref_escpos_en/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-11",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Barcode Scanner Integration",
+    "titleEs": "Integración de Escáner de Código de Barras",
+    "descriptionEn": "Implement barcode scanner integration: keyboard wedge mode vs WebHID vs WebUSB, focus management for fast scanning.",
+    "descriptionEs": "Implementa integración de escáner de código de barras: keyboard wedge mode vs WebHID vs WebUSB, manejo de foco para escaneo rápido.",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "hintsEn": [
+      "Most scanners emulate a keyboard: type the code, append Enter",
+      "Use a hidden input that auto-focuses, listen for Enter",
+      "WebHID/WebUSB for direct mode (advanced, less compatible)"
+    ],
+    "hintsEs": [
+      "La mayoría de escáneres emulan un teclado: escriben el código, añaden Enter",
+      "Usa un input oculto con auto-focus, escucha Enter",
+      "WebHID/WebUSB para modo directo (avanzado, menos compatible)"
+    ],
+    "solutionEn": "Keyboard wedge mode: hidden input with autoFocus, listen for Enter key as terminator, accumulate characters in a buffer, debounce-reset on timeout. Re-focus on any click. Play beep sound on successful scan. WebHID mode for advanced: navigator.hid.requestDevice() + inputreport event listener for raw barcode data.",
+    "solutionEs": "Keyboard wedge con input auto-focused, detección de Enter como terminador, audio feedback, cleanup con timeout. WebHID como alternativa avanzada.",
+    "explanationEn": "Keyboard wedge is the simplest and most compatible: 90% of scanners work this way. The key insight: distinguish scanner input from human typing by requiring rapid succession (10ms between chars).",
+    "explanationEs": "Keyboard wedge es lo más simple y compatible: el 90% de los escáneres funcionan así. Insight clave: distinguir input del escáner del typing humano requiriendo sucesión rápida (10ms entre chars).",
+    "starterCode": "export function BarcodeScanner({ onScan }: { onScan: (code: string) => void }) { return null; }",
+    "tags": [
+      "pos",
+      "barcode",
+      "hardware"
+    ],
+    "resources": [
+      {
+        "title": "WebHID API",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebHID_API",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-12",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Discount and Promotion Engine",
+    "titleEs": "Motor de Descuentos y Promociones",
+    "descriptionEn": "Design a discount engine: percentage off, fixed amount, BOGO, tiered. Apply to cart line items or entire cart.",
+    "descriptionEs": "Diseña un motor de descuentos: porcentaje, monto fijo, BOGO, escalonado. Aplica a líneas de carrito o carrito completo.",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "hintsEn": [
+      "Store promotion rules as data, not code",
+      "Each rule returns a discount amount given the cart",
+      "Apply in priority order, no double-discounts on same line"
+    ],
+    "hintsEs": [
+      "Almacena reglas de promoción como datos, no como código",
+      "Cada regla retorna un monto de descuento dado el carrito",
+      "Aplica en orden de prioridad, sin doble descuento en la misma línea"
+    ],
+    "solutionEn": "PromotionRule schema with type (percentage/fixed/bogo/tiered), priority, conditions, and effect. applyPromotions() sorts rules by priority, evaluates each, and applies discount to either cart total or specific lines. Each line tracks appliedPromo to prevent stacking. Conditions check min subtotal, product inclusion, customer tags, etc.",
+    "solutionEs": "Reglas como datos (PromotionRule interface), sorted por priority, evaluación de conditions, aplicación por línea o carrito entero sin doble descuento.",
+    "explanationEn": "Storing rules as data lets marketing teams create promotions without code deploys. The priority + no-double-discount rule prevents stack abuse. The cheapest in cart pattern is key for BOGO and gift-with-purchase.",
+    "explanationEs": "Almacenar reglas como datos permite al equipo de marketing crear promociones sin deploys. La regla de priority + sin doble descuento previene abuso de stack. El patrón cheapest in cart es clave para BOGO.",
+    "starterCode": "export function applyPromotions(cart: Cart, rules: PromotionRule[]): Cart { return cart; }",
+    "tags": [
+      "pos",
+      "promotions",
+      "business-logic"
+    ],
+    "resources": [
+      {
+        "title": "Shopify discount API",
+        "url": "https://shopify.dev/docs/api/admin-rest/2023-10/resources/discount",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-13",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Tax Calculation per Region",
+    "titleEs": "Cálculo de Impuestos por Región",
+    "descriptionEn": "Design tax calculation: VAT in EU, sales tax in US (varies by state), exemptions. Show the data model.",
+    "descriptionEs": "Diseña cálculo de impuestos: VAT en EU, sales tax en US (varía por estado), exenciones. Muestra el modelo de datos.",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "hintsEn": [
+      "Tax rules indexed by region (country, state, city)",
+      "Some products are tax-exempt (groceries, medicine)",
+      "Use a tax engine like TaxJar or Avalara for accuracy"
+    ],
+    "hintsEs": [
+      "Reglas de impuestos indexadas por región (país, estado, ciudad)",
+      "Algunos productos son exentos (comida, medicina)",
+      "Usa un motor como TaxJar o Avalara para precisión"
+    ],
+    "solutionEn": "TaxRule table with region (US-CA, US-NY, EU-DE, MX-CMX), rate (Decimal 0.0875 = 8.75%), category, productId override, exempt flag, priority. getTaxRate() lookup order: product-specific > category-level > region default. For complex US sales tax (state+county+city), use TaxJar or Avalara API. For EU VAT, validate VAT IDs via VIES API.",
+    "solutionEs": "TaxRule table indexada por region/category/product, override de producto > category > region default, third-party engine para US compuesto, VIES para EU VAT.",
+    "explanationEn": "Tax calculation is one of the most compliance-heavy areas of e-commerce. Getting it wrong can mean fines, audit issues, or uncompetitive prices. Use a third-party engine for production - the rule set is too complex to maintain in-house.",
+    "explanationEs": "El cálculo de impuestos es una de las áreas con más compliance de e-commerce. Hacerlo mal significa multas, auditorías, o precios no competitivos. Usa un motor externo para producción - el set de reglas es muy complejo para mantener in-house.",
+    "tags": [
+      "tax",
+      "compliance",
+      "pos"
+    ],
+    "resources": [
+      {
+        "title": "TaxJar API docs",
+        "url": "https://developers.taxjar.com/api/reference/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-14",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Customer Loyalty Program",
+    "titleEs": "Programa de Lealtad de Clientes",
+    "descriptionEn": "Design a loyalty program: points per purchase, tier system (Bronze/Silver/Gold), rewards catalog. Show the data model.",
+    "descriptionEs": "Diseña un programa de lealtad: puntos por compra, sistema de niveles (Bronze/Silver/Gold), catálogo de rewards. Muestra el modelo de datos.",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "hintsEn": [
+      "LoyaltyAccount tracks points balance and tier",
+      "LoyaltyTransaction is append-only, never edit history",
+      "Tier thresholds based on points earned in last 12 months"
+    ],
+    "hintsEs": [
+      "LoyaltyAccount trackea balance de puntos y tier",
+      "LoyaltyTransaction es append-only, nunca editar historial",
+      "Umbrales de tier basados en puntos ganados en últimos 12 meses"
+    ],
+    "solutionEn": "LoyaltyAccount (customerId, pointsBalance, pointsEarned12mo, tier). LoyaltyTransaction append-only (accountId, type, points, reason, saleId, expiresAt). Reward catalog (id, name, pointsCost, type, value). earnPoints() calculates based on tier multiplier (bronze: 1pt/$1, silver: 2, gold: 3, platinum: 5), creates transaction, increments balance, recalculates tier. Points expire 2 years after earn.",
+    "solutionEs": "LoyaltyAccount + LoyaltyTransaction (append-only), earn rate por tier, tier recalculado por puntos en 12 meses, expiración FIFO 2 años.",
+    "explanationEn": "The append-only transaction log is the key: you can always audit where did these points come from. The 12-month rolling window for tiers prevents inactive customers from staying Gold forever.",
+    "explanationEs": "El log append-only es la clave: siempre puedes auditar de dónde vinieron estos puntos. La ventana rolling de 12 meses para tiers previene que clientes inactivos se queden Gold para siempre.",
+    "tags": [
+      "loyalty",
+      "pos",
+      "rewards"
+    ],
+    "resources": [
+      {
+        "title": "Loyalty program design",
+        "url": "https://en.wikipedia.org/wiki/Loyalty_program",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-15",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Multi-Branch Inventory Sync",
+    "titleEs": "Sincronización de Inventario Multi-Sucursal",
+    "descriptionEn": "Design a multi-branch inventory system: transfers between branches, real-time stock visibility, role-based access.",
+    "descriptionEs": "Diseña un sistema de inventario multi-sucursal: transferencias entre sucursales, visibilidad de stock en tiempo real, acceso basado en roles.",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "hintsEn": [
+      "Stock is per branch: ProductStock(branchId, productId, quantity)",
+      "Transfers are atomic: decrement origin + increment destination in one tx",
+      "Use event streaming for real-time visibility"
+    ],
+    "hintsEs": [
+      "Stock es por sucursal: ProductStock(branchId, productId, quantity)",
+      "Transferencias son atómicas: decrementar origen + incrementar destino en un tx",
+      "Usa event streaming para visibilidad en tiempo real"
+    ],
+    "solutionEn": "ProductStock is per branch with composite PK (branchId, productId). StockTransfer tracks status (pending/in_transit/received/cancelled). initiateTransfer: atomic tx decrements origin. receiveTransfer: atomic tx increments destination, marks transfer received. WebSocket broadcasts stock changes to all terminals in a branch.",
+    "solutionEs": "ProductStock por branch, transferencia atómica (decrementar origen + crear registro in_transit), receive atómico (incrementar destino), WebSocket para visibilidad.",
+    "explanationEn": "The atomic transfer pattern ensures consistency: either both branches update or neither. The in_transit status is a soft lock that prevents double-counting.",
+    "explanationEs": "El patrón de transferencia atómica asegura consistencia: ambas sucursales actualizan o ninguna. El estado in_transit es un soft lock que previene doble conteo.",
+    "tags": [
+      "inventory",
+      "multi-branch",
+      "transactions"
+    ],
+    "resources": [
+      {
+        "title": "Multi-warehouse inventory",
+        "url": "https://martinfowler.com/eaaCatalog/aggregatedRoot.html",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-16",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Real-Time Inventory Updates",
+    "titleEs": "Actualizaciones de Inventario en Tiempo Real",
+    "descriptionEn": "Design a system where every cashier terminal sees live stock levels: changes propagate to all terminals within 100ms.",
+    "descriptionEs": "Diseña un sistema donde cada terminal de caja vea niveles de stock en vivo: los cambios se propagan a todos los terminales en menos de 100ms.",
+    "difficulty": "advanced",
+    "type": "coding",
+    "points": 50,
+    "language": "typescript",
+    "hintsEn": [
+      "WebSocket broadcasts stock changes after every sale/transfer",
+      "Use Redis Pub/Sub to fan out across multiple server instances",
+      "Optimistic UI: show predicted stock, reconcile on confirmation"
+    ],
+    "hintsEs": [
+      "WebSocket broadcast de cambios de stock tras cada venta/transferencia",
+      "Usa Redis Pub/Sub para fan-out entre múltiples instancias",
+      "UI optimista: muestra stock predicho, reconcilia en confirmación"
+    ],
+    "solutionEn": "On any stock change, publish event to Redis channel branch:{branchId}:stock. Each server instance subscribes via @socket.io/redis-adapter and broadcasts to its connected terminals via WebSocket. Client hook useLiveStock listens for productId match and updates state. Optimistic UI updates stock immediately on sale, rolls back on error.",
+    "solutionEs": "WebSocket + Redis Pub/Sub para fan-out cross-instance, hook cliente con optimistic update + rollback on error.",
+    "explanationEn": "The combination of WebSocket + Redis Pub/Sub gives you horizontal scalability with low latency. Optimistic updates make the UI feel instant even with 100ms network round-trips.",
+    "explanationEs": "La combinación de WebSocket + Redis Pub/Sub te da escalabilidad horizontal con baja latencia. Las updates optimistas hacen la UI sentir instantánea incluso con 100ms de round-trip.",
+    "starterCode": "function useLiveStock(productId: string) { return null; }",
+    "tags": [
+      "realtime",
+      "websocket",
+      "redis"
+    ],
+    "resources": [
+      {
+        "title": "Socket.io Redis Adapter",
+        "url": "https://socket.io/docs/v4/redis-adapter/",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-17",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Overselling Prevention Patterns",
+    "titleEs": "Patrones para Prevenir Sobreventa",
+    "descriptionEn": "Compare strategies to prevent overselling: pessimistic locking, optimistic concurrency control, queue-based serialization.",
+    "descriptionEs": "Compara estrategias para prevenir sobreventa: pessimistic locking, optimistic concurrency control, queue-based serialization.",
+    "difficulty": "advanced",
+    "type": "conceptual",
+    "points": 50,
+    "hintsEn": [
+      "Pessimistic: SELECT FOR UPDATE blocks other readers",
+      "Optimistic: version column, retry on conflict",
+      "Queue: serialize all stock changes through a single consumer"
+    ],
+    "hintsEs": [
+      "Pessimistic: SELECT FOR UPDATE bloquea otros lectores",
+      "Optimistic: columna version, retry en conflicto",
+      "Cola: serializa todos los cambios de stock a través de un único consumer"
+    ],
+    "solutionEn": "Three strategies: 1) Pessimistic: SELECT FOR UPDATE in transaction, simple but blocks readers. 2) Optimistic: version column + updateMany with WHERE version, retry on conflict. Scales well, retries on contention. 3) Queue: BullMQ worker with concurrency:1, single point of serialization. Best for high contention. Start optimistic, switch to queue if you see conflict storms.",
+    "solutionEs": "Pessimistic (SELECT FOR UPDATE), Optimistic (version column + retry), Queue (BullMQ serializado). Para high-contention, queue; para low-contention, optimistic.",
+    "explanationEn": "Each strategy trades throughput for simplicity. Most e-commerce sites use optimistic because contention is low; flash sales with millions of users might need a queue to avoid thundering herd.",
+    "explanationEs": "Cada estrategia intercambia throughput por simplicidad. La mayoría de e-commerce usa optimistic porque la contención es baja; las ventas flash con millones de usuarios podrían necesitar una cola.",
+    "tags": [
+      "concurrency",
+      "inventory",
+      "patterns"
+    ],
+    "resources": [
+      {
+        "title": "Optimistic vs Pessimistic locking",
+        "url": "https://en.wikipedia.org/wiki/Optimistic_concurrency_control",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-18",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Stock Alerts and Reorder Triggers",
+    "titleEs": "Alertas de Stock y Triggers de Reorden",
+    "descriptionEn": "Design a stock alert system: notify managers when stock drops below threshold, generate reorder suggestions.",
+    "descriptionEs": "Diseña un sistema de alertas de stock: notifica a managers cuando el stock cae bajo el umbral, genera sugerencias de reorden.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Trigger alert when stock <= threshold (defined per product)",
+      "Daily job generates reorder report based on velocity",
+      "Use exponential moving average for sales velocity"
+    ],
+    "hintsEs": [
+      "Dispara alerta cuando stock <= umbral (definido por producto)",
+      "Job diario genera reporte de reorden basado en velocidad",
+      "Usa exponential moving average para velocidad de ventas"
+    ],
+    "solutionEn": "ProductThreshold (productId, minStock, reorderQty). After every stock change, checkAndAlert() creates a StockAlert if stock <= minStock, with dedup logic to prevent alert fatigue (one unacknowledged per product/branch). Daily cron calculates 30-day sales velocity, generates reorder suggestions for products with < 7 days of stock.",
+    "solutionEs": "ProductThreshold con minStock, alerta en cada cambio de stock (sin duplicados), job diario calcula velocity y genera reorder suggestions.",
+    "explanationEn": "The dedup logic (one unacknowledged alert per product) prevents alert fatigue. The daily reorder job uses real sales velocity, not just threshold - this prevents over-ordering slow movers and under-ordering hot items.",
+    "explanationEs": "La lógica de dedup (una alerta no reconocida por producto) previene alert fatigue. El job diario usa velocidad real de ventas, no solo umbral - previene sobre-ordenar slow movers y sub-ordenar hot items.",
+    "starterCode": "export async function checkAndAlert(branchId: string, productId: string, newStock: number) { /* TODO */ }",
+    "tags": [
+      "inventory",
+      "alerts",
+      "automation"
+    ],
+    "resources": [
+      {
+        "title": "Inventory management",
+        "url": "https://en.wikipedia.org/wiki/Inventory_management",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-19",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Historical Stock Reports",
+    "titleEs": "Reportes Históricos de Stock",
+    "descriptionEn": "Design historical stock reports: movements per day, current value, dead stock, wastage. Show the queries.",
+    "descriptionEs": "Diseña reportes históricos de stock: movimientos por día, valor actual, stock muerto, mermas. Muestra las queries.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "StockMovement table is append-only with type and quantity",
+      "Use Prisma aggregations for current stock",
+      "Dead stock: no sales in last 90 days"
+    ],
+    "hintsEs": [
+      "StockMovement es append-only con type y quantity",
+      "Usa agregaciones de Prisma para stock actual",
+      "Stock muerto: sin ventas en últimos 90 días"
+    ],
+    "solutionEn": "StockMovement table (productId, branchId, type, quantity, reason, createdAt) with indexes on (productId, createdAt), (branchId, createdAt), (type, createdAt). Queries: movements per day (date_trunc + groupBy), current value (SUM(quantity * cost/price)), dead stock (filter products with no recent sales), wastage (groupBy type=waste).",
+    "solutionEs": "StockMovement append-only, query SQL con date_trunc para movimientos diarios, agregaciones Prisma para stock actual, dedupe de productos vendidos en últimos 90 días para dead stock.",
+    "explanationEn": "The append-only StockMovement table is the source of truth for all reports. Current stock is derived from movements (or maintained in ProductStock as a denormalized cache). Dead stock is a critical metric: it ties up capital and shelf space.",
+    "explanationEs": "La tabla append-only StockMovement es la fuente de verdad para todos los reportes. El stock actual se deriva de los movimientos. El stock muerto es una métrica crítica: ata capital y espacio en estantes.",
+    "starterCode": "export async function getMovementsPerDay(branchId: string) { return []; }",
+    "tags": [
+      "reporting",
+      "sql",
+      "inventory"
+    ],
+    "resources": [
+      {
+        "title": "SQL date functions",
+        "url": "https://www.postgresql.org/docs/current/functions-datetime.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-20",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Product Variants and Attributes",
+    "titleEs": "Variantes y Atributos de Productos",
+    "descriptionEn": "Design a product variant system: t-shirt with sizes and colors. Show the schema and how to query for variants.",
+    "descriptionEs": "Diseña un sistema de variantes de producto: camiseta con tallas y colores. Muestra el schema y cómo consultar variantes.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Option type (Size), Option value (Small), Variant links to specific combination",
+      "Each variant has its own SKU and stock",
+      "Index on (productId, options) for fast lookup"
+    ],
+    "hintsEs": [
+      "Tipo de opción (Size), valor (Small), Variant linkea a combinación específica",
+      "Cada variant tiene su propio SKU y stock",
+      "Indexa (productId, options) para lookup rápido"
+    ],
+    "solutionEn": "Product (id, name) → ProductOption (id, name: Size/Color, position) → ProductOptionValue (id, value: Small/Red). ProductVariant (id, productId, sku, price, cost, stock) with VariantOption join table (variantId, optionValueId). findVariant() uses AND of options: { some: { optionValueId: id } } for each selected value. generateVariants() uses reduce to compute cartesian product.",
+    "solutionEs": "ProductOption/ProductOptionValue para definir opciones, ProductVariant por combinación con su propio SKU, VariantOption tabla join para lookup por opción.",
+    "explanationEn": "The normalized schema lets you query all red small t-shirts efficiently. The variant-as-first-class entity means inventory, pricing, and images are per-variant, which matches how retail works.",
+    "explanationEs": "El schema normalizado permite consultar todas las camisetas pequeñas rojas eficientemente. La variant como entidad de primera clase significa que inventario, precio e imágenes son por variante.",
+    "starterCode": "async function findVariant(productId: string, options: string[]) { return null; }",
+    "tags": [
+      "schema",
+      "variants",
+      "prisma"
+    ],
+    "resources": [
+      {
+        "title": "Shopify variants",
+        "url": "https://shopify.dev/docs/api/storefront/latest/objects/ProductVariant",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-21",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Returns and Refunds Workflow",
+    "titleEs": "Flujo de Devoluciones y Reembolsos",
+    "descriptionEn": "Design the returns workflow: customer brings item, cashier inspects, approves refund, restocks or marks damaged.",
+    "descriptionEs": "Diseña el flujo de devoluciones: cliente trae item, cajero inspecciona, aprueba reembolso, reestockea o marca como dañado.",
+    "difficulty": "intermediate",
+    "type": "conceptual",
+    "points": 25,
+    "hintsEn": [
+      "Return has many ReturnItems, each linked to original SaleItem",
+      "Restock: add back to ProductStock with original condition",
+      "Damaged: track separately, may be written off"
+    ],
+    "hintsEs": [
+      "Return tiene muchos ReturnItems, cada uno linkeado al SaleItem original",
+      "Restock: añade de vuelta a ProductStock con condición original",
+      "Dañado: trackea por separado, puede ser dado de baja"
+    ],
+    "solutionEn": "Return (saleId, cashierId, reason, status, refundMethod, totalRefund) with ReturnItems (saleItemId, productId, quantity, condition: new/opened/damaged/defective, restock, refundAmount). Workflow: scan receipt → load sale → cashier selects items + condition + reason → atomic tx: create return, restock (if restock=true) or log waste (if damaged), update sale status. Validations: return window (30 days), max quantity, original payment method for refund.",
+    "solutionEs": "Return con ReturnItems linkeados a SaleItems, condition por item, restock vs waste, refund proporcional al método original, validación de window y quantity.",
+    "explanationEn": "Returns are an opportunity: data on returns tells you about product quality, customer satisfaction, and fraud. Treat them as data, not just a refund transaction.",
+    "explanationEs": "Las devoluciones son una oportunidad: los datos de devoluciones dicen sobre calidad del producto, satisfacción del cliente, y fraude. Trátalas como datos, no solo como transacción de reembolso.",
+    "tags": [
+      "pos",
+      "returns",
+      "workflow"
+    ],
+    "resources": [
+      {
+        "title": "Returns management best practices",
+        "url": "https://www.nrf.com/",
+        "type": "article"
+      }
+    ]
+  },
+  {
+    "id": "ecom-22",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Product Search and Filtering",
+    "titleEs": "Búsqueda y Filtrado de Productos",
+    "descriptionEn": "Implement fast product search with multiple filters: category, price range, attributes, in-stock only. Show the query.",
+    "descriptionEs": "Implementa búsqueda rápida de productos con múltiples filtros: categoría, rango de precio, atributos, solo en stock. Muestra la query.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Combine full-text search with structured filters",
+      "Use composite indexes for common filter combinations",
+      "Pagination with cursor, not offset"
+    ],
+    "hintsEs": [
+      "Combina búsqueda full-text con filtros estructurados",
+      "Usa composite indexes para combinaciones comunes",
+      "Paginación con cursor, no offset"
+    ],
+    "solutionEn": "Postgres tsvector for full-text search via websearch_to_tsquery + ts_rank, combined with structured filters via $queryRaw. Each filter is conditional with Prisma.sql: TRUE or the actual condition. EXISTS subquery for in-stock check. Cursor pagination on id. Indexes: GIN on search_vector, composite (categoryId, price), and (productId, quantity).",
+    "solutionEs": "tsvector + filtros estructurados con SQL condicional, EXISTS para in-stock check, cursor pagination, índices GIN + composite.",
+    "explanationEn": "Dynamic SQL with conditional WHERE clauses avoids the N+1 problem of building filter queries in code. The GIN index on tsvector makes text search O(log n); the composite index on (category, price) makes structured filters O(log n).",
+    "explanationEs": "El SQL dinámico con WHERE condicional evita el problema N+1 de construir queries en código. El índice GIN en tsvector hace la búsqueda de texto O(log n); el composite index en (category, price) hace los filtros estructurados O(log n).",
+    "starterCode": "export async function searchProducts(params: ProductSearchParams) { return { items: [], nextCursor: null }; }",
+    "tags": [
+      "search",
+      "sql",
+      "prisma"
+    ],
+    "resources": [
+      {
+        "title": "Postgres full-text search",
+        "url": "https://www.postgresql.org/docs/current/textsearch.html",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-23",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Order Confirmation Email",
+    "titleEs": "Email de Confirmación de Pedido",
+    "descriptionEn": "Design order confirmation emails: template, sending queue, retry on failure, unsubscribe handling.",
+    "descriptionEs": "Diseña emails de confirmación de pedido: plantilla, cola de envío, retry en fallo, manejo de unsubscribe.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Use a transactional email service (Resend, Postmark, SendGrid)",
+      "Queue emails with retry (BullMQ)",
+      "Include List-Unsubscribe header for spam compliance"
+    ],
+    "hintsEs": [
+      "Usa un servicio de email transaccional (Resend, Postmark, SendGrid)",
+      "Encola emails con retry (BullMQ)",
+      "Incluye header List-Unsubscribe para compliance de spam"
+    ],
+    "solutionEn": "Resend (or Postmark/SendGrid) for transactional email. BullMQ queue with exponential backoff (3 attempts). Email template (React Email) with inline CSS. List-Unsubscribe header. Per-template unsubscribe preference table. Worker checks unsubscribe before sending.",
+    "solutionEs": "Resend para transactional, BullMQ queue con 3 reintentos exponential backoff, header List-Unsubscribe, check de unsubscribe antes de enviar.",
+    "explanationEn": "Transactional emails are critical for customer trust. Use a dedicated service (not your marketing email tool) for better deliverability. The unsubscribe list is per-template: a user can opt out of marketing but still receive order updates.",
+    "explanationEs": "Los emails transaccionales son críticos para la confianza del cliente. Usa un servicio dedicado (no tu herramienta de marketing) para mejor deliverability. La lista de unsubscribe es por template.",
+    "starterCode": "export async function sendOrderConfirmation(saleId: string) { /* TODO */ }",
+    "tags": [
+      "email",
+      "queue",
+      "transactional"
+    ],
+    "resources": [
+      {
+        "title": "Resend docs",
+        "url": "https://resend.com/docs",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-24",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Receipt Lookup by Phone Number",
+    "titleEs": "Búsqueda de Recibos por Número de Teléfono",
+    "descriptionEn": "Implement receipt lookup by customer phone number: search sales by phone, paginate, show last 90 days.",
+    "descriptionEs": "Implementa búsqueda de recibos por número de teléfono del cliente: busca ventas por teléfono, paginiza, muestra últimos 90 días.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Normalize phone numbers (E.164 format)",
+      "Index on customer.phone for fast lookup",
+      "Cursor pagination for large result sets"
+    ],
+    "hintsEs": [
+      "Normaliza números de teléfono (formato E.164)",
+      "Indexa customer.phone para búsqueda rápida",
+      "Cursor pagination para grandes result sets"
+    ],
+    "solutionEn": "libphonenumber-js for E.164 normalization. findSalesByPhone(phone, cursor) where clause: customer.phone = normalized AND createdAt >= now-90d, with cursor pagination on id desc. UI hook with 300ms debounce, requires min 4 chars.",
+    "solutionEs": "Normalización E.164 con libphonenumber, query indexada con cursor pagination, hook con debounce 300ms, ventana de 90 días.",
+    "explanationEn": "Phone normalization is critical: a customer might dial +1 (415) 555-2671 or 4155552671 or 415-555-2671. All must match. Use libphonenumber for E.164 normalization.",
+    "explanationEs": "La normalización de teléfono es crítica: un cliente puede marcar +1 (415) 555-2671 o 4155552671 o 415-555-2671. Todos deben matchear. Usa libphonenumber para normalización E.164.",
+    "starterCode": "export async function findSalesByPhone(phone: string) { return { items: [], nextCursor: null }; }",
+    "tags": [
+      "search",
+      "pos",
+      "ux"
+    ],
+    "resources": [
+      {
+        "title": "libphonenumber-js",
+        "url": "https://github.com/catamphetamine/libphonenumber-js",
+        "type": "documentation"
+      }
+    ]
+  },
+  {
+    "id": "ecom-25",
+    "slug": "gitanas-ecommerce",
+    "titleEn": "Audit Log for Compliance",
+    "titleEs": "Audit Log para Compliance",
+    "descriptionEn": "Design an audit log system: log every cashier action, user changes, sensitive operations. Enable search and export.",
+    "descriptionEs": "Diseña un sistema de audit log: loggea cada acción de cajero, cambios de usuario, operaciones sensibles. Habilita búsqueda y export.",
+    "difficulty": "intermediate",
+    "type": "coding",
+    "points": 25,
+    "language": "typescript",
+    "hintsEn": [
+      "Append-only table with userId, action, resource, before/after JSON",
+      "Index on (userId, timestamp) and (resource, timestamp)",
+      "Never UPDATE or DELETE audit logs"
+    ],
+    "hintsEs": [
+      "Tabla append-only con userId, action, resource, before/after JSON",
+      "Index en (userId, timestamp) y (resource, timestamp)",
+      "Nunca UPDATE ni DELETE audit logs"
+    ],
+    "solutionEn": "AuditLog (userId, userRole, action, resource, resourceId, before, after, ipAddress, userAgent, createdAt) with indexes on (userId, createdAt), (resource, resourceId, createdAt). Centralized audit() helper called after every sensitive operation. DB-level trigger to enforce append-only (rollback on UPDATE/DELETE). searchAuditLogs() with filters and pagination.",
+    "solutionEs": "AuditLog append-only, helper audit() centralizado, before/after JSON para cambios, search por user/action/resource.",
+    "explanationEn": "The append-only pattern is the key: never update or delete audit logs. Use database triggers to enforce this at the DB level (a trigger that rolls back any UPDATE or DELETE on audit_logs).",
+    "explanationEs": "El patrón append-only es la clave: nunca actualizar ni eliminar audit logs. Usa triggers de BD para enforce esto a nivel de DB (un trigger que hace rollback de cualquier UPDATE/DELETE en audit_logs).",
+    "starterCode": "export async function audit(params: any) { /* TODO */ }",
+    "tags": [
+      "audit",
+      "compliance",
+      "security"
+    ],
+    "resources": [
+      {
+        "title": "Postgres audit triggers",
+        "url": "https://wiki.postgresql.org/wiki/Audit_trigger",
+        "type": "article"
+      }
+    ]
+  }
+]

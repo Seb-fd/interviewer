@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card'
 import { Button } from '@components/ui/button'
 import { Badge } from '@components/ui/badge'
-import { ArrowRight, BookOpen, Code, Trophy, Flame, Target } from 'lucide-react'
+import { ArrowRight, BookOpen, Code, Trophy, Flame, Target, GraduationCap } from 'lucide-react'
 import { useCategories } from '@/hooks'
 
 export default function Home() {
@@ -53,7 +53,41 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="hover:border-primary/50 transition-colors border-primary/30 bg-primary/5">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+                  <GraduationCap className="h-6 w-6" />
+                </div>
+                <CardTitle>{t('home.modes.learn.title', 'Learn')}</CardTitle>
+                <CardDescription>
+                  {t('home.modes.learn.description', 'Guided learning with mastery tracking and spaced repetition')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-primary" />
+                    <span>{t('home.modes.learn.feature1', 'Track mastery per topic')}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Flame className="h-4 w-4 text-orange-500" />
+                    <span>{t('home.modes.learn.feature2', 'Spaced repetition reviews')}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-4 w-4 text-yellow-500" />
+                    <span>{t('home.modes.learn.feature3', 'Identify weak areas')}</span>
+                  </div>
+                </div>
+                <Link to="/learn" className="block mt-4">
+                  <Button className="w-full gap-2">
+                    {t('home.modes.learn.cta', 'Open Learning Dashboard')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
             <Card className="hover:border-primary/50 transition-colors">
               <CardHeader>
                 <div className="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center mb-4">
@@ -66,7 +100,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {projectCategories.slice(0, 4).map((cat) => (
+                  {projectCategories.map((cat) => (
                     <Link
                       key={cat.slug}
                       to={`/category/${cat.slug}`}
@@ -98,7 +132,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {techCategories.slice(0, 4).map((cat) => (
+                  {techCategories.map((cat) => (
                     <Link
                       key={cat.slug}
                       to={`/category/${cat.slug}`}

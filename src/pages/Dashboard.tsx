@@ -8,10 +8,66 @@ import { BadgeItem } from '@components/dashboard/badge-item'
 import { ProgressRing } from '@components/dashboard/progress-ring'
 import { QuestionCard } from '@/components/dashboard/question-card'
 import { CategoryIcon } from '@/components/dashboard/category-icon'
-import { LearningStatsCard } from '@/components/dashboard/learning-stats-card'
-import { Trophy, Target, Flame, Award } from 'lucide-react'
+import { Trophy, Target, Flame, Award, GraduationCap } from 'lucide-react'
 import { useCategories, useBadges, useQuestionsWithProgress } from '@/hooks'
 import { useProgressStore } from '@/stores/progress-store'
+
+interface CategoryCardProps {
+  category: {
+    id: string
+    slug: string
+    nameEn: string
+    nameEs: string
+    descriptionEn: string
+    descriptionEs: string
+    icon: string
+    color: string
+    totalQuestions: number
+  }
+  isSpanish: boolean
+  progressMap: Record<string, { questionsCompleted?: string[] }>
+  t: (key: string, fallback?: any) => string
+}
+
+function CategoryCard({ category, isSpanish, progressMap, t }: CategoryCardProps) {
+  const progress = progressMap[category.slug]
+  const completed = progress?.questionsCompleted?.length || 0
+  const percent = category.totalQuestions > 0
+    ? Math.round((completed / category.totalQuestions) * 100)
+    : 0
+
+  return (
+    <Card className="hover:border-primary/50 transition-colors">
+      <CardHeader>
+        <div
+          className="w-12 h-12 rounded-lg flex items-center justify-center mb-2"
+          style={{ backgroundColor: `${category.color}20`, color: category.color }}
+        >
+          <CategoryIcon name={category.icon} className="h-6 w-6" />
+        </div>
+        <CardTitle className="text-lg">
+          {isSpanish ? category.nameEs : category.nameEn}
+        </CardTitle>
+        <CardDescription>
+          {isSpanish ? category.descriptionEs : category.descriptionEn}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            {category.totalQuestions} {t('dashboard.questions', 'questions')}
+          </span>
+          <ProgressRing progress={percent} size={40} />
+        </div>
+        <Link to={`/category/${category.slug}`}>
+          <Button variant="outline" className="w-full">
+            {t('dashboard.practice', 'Practice')}
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation()
@@ -29,6 +85,8 @@ export default function Dashboard() {
 
   const earnedBadges = badges.filter(b => b.earned)
   const recentBadges = badges.slice(0, 4)
+
+  const cardProps = { isSpanish, progressMap: categoryProgress, t }
 
   return (
     <div className="container py-8 space-y-8">
@@ -72,7 +130,26 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <LearningStatsCard />
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader>
+            <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-2">
+              <GraduationCap className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-lg">
+              {t('learning.title', 'Learning Dashboard')}
+            </CardTitle>
+            <CardDescription>
+              {t('learning.subtitle', 'Track your mastery and study progress')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link to="/learn">
+              <Button className="w-full gap-2">
+                {t('dashboard.openLearning', 'Open Learning Dashboard')}
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
       <div>
@@ -81,35 +158,7 @@ export default function Dashboard() {
         </h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {projectCategories.map((cat) => (
-            <Card key={cat.slug} className="hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center mb-2"
-                  style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
-                >
-                  <CategoryIcon name={cat.icon} className="h-6 w-6" />
-                </div>
-                <CardTitle className="text-lg">{isSpanish ? cat.nameEs : cat.nameEn}</CardTitle>
-                <CardDescription>
-                  {isSpanish ? cat.descriptionEs : cat.descriptionEn}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>{cat.totalQuestions} {t('dashboard.questions', 'questions')}</span>
-                  <ProgressRing progress={(() => {
-                    const progress = categoryProgress[cat.slug]
-                    const completed = progress?.questionsCompleted?.length || 0
-                    return cat.totalQuestions > 0 ? Math.round((completed / cat.totalQuestions) * 100) : 0
-                  })()} size={40} />
-                </div>
-                <Link to={`/category/${cat.slug}`}>
-                  <Button variant="outline" className="w-full">
-                    {t('dashboard.practice', 'Practice')}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            <CategoryCard key={cat.slug} category={cat} {...cardProps} />
           ))}
         </div>
       </div>
@@ -120,35 +169,7 @@ export default function Dashboard() {
         </h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {techCategories.map((cat) => (
-            <Card key={cat.slug} className="hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div
-                  className="w-12 h-12 rounded-lg flex items-center justify-center mb-2"
-                  style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
-                >
-                  <CategoryIcon name={cat.icon} className="h-6 w-6" />
-                </div>
-                <CardTitle className="text-lg">{isSpanish ? cat.nameEs : cat.nameEn}</CardTitle>
-                <CardDescription>
-                  {isSpanish ? cat.descriptionEs : cat.descriptionEn}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>{cat.totalQuestions} {t('dashboard.questions', 'questions')}</span>
-                  <ProgressRing progress={(() => {
-                    const progress = categoryProgress[cat.slug]
-                    const completed = progress?.questionsCompleted?.length || 0
-                    return cat.totalQuestions > 0 ? Math.round((completed / cat.totalQuestions) * 100) : 0
-                  })()} size={40} />
-                </div>
-                <Link to={`/category/${cat.slug}`}>
-                  <Button variant="outline" className="w-full">
-                    {t('dashboard.practice', 'Practice')}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            <CategoryCard key={cat.slug} category={cat} {...cardProps} />
           ))}
         </div>
       </div>

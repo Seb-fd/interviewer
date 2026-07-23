@@ -14,6 +14,7 @@ const Question = lazy(() => import('@pages/Question'))
 const Profile = lazy(() => import('@pages/Profile'))
 const Leaderboard = lazy(() => import('@pages/Leaderboard'))
 const ReviewSession = lazy(() => import('@pages/ReviewSession'))
+const Learn = lazy(() => import('@pages/Learn'))
 const NotFound = lazy(() => import('@pages/NotFound'))
 
 function LoadingFallback() {
@@ -96,6 +97,16 @@ function App() {
               <ProtectedRoute>
                 <Suspense fallback={<LoadingFallback />}>
                   <ReviewSession />
+                </Suspense>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/learn"
+            element={
+              <ProtectedRoute>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Learn />
                 </Suspense>
               </ProtectedRoute>
             }

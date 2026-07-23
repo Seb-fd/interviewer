@@ -24,6 +24,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "learn": "Learn",
     "categories": "Categories",
     "profile": "Profile",
     "leaderboard": "Leaderboard"

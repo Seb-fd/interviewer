@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { Flame, Trophy, Menu, X, User } from "lucide-react"
+import { Flame, Trophy, Menu, X, User, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -30,6 +30,13 @@ export function Header({ className }: HeaderProps) {
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
             {t('nav.home', 'Home')}
+          </Link>
+          <Link
+            to="/learn"
+            className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+          >
+            <GraduationCap className="h-4 w-4" />
+            {t('nav.learn', 'Learn')}
           </Link>
           <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
             {t('nav.dashboard', 'Dashboard')}
@@ -73,6 +80,14 @@ export function Header({ className }: HeaderProps) {
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('nav.home', 'Home')}
+            </Link>
+            <Link
+              to="/learn"
+              className="text-sm py-2 flex items-center gap-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <GraduationCap className="h-4 w-4" />
+              {t('nav.learn', 'Learn')}
             </Link>
             <Link
               to="/dashboard"

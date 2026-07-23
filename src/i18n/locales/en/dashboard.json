@@ -20,6 +20,7 @@
     "streakDays_other": "{{count}} days",
     "keepGoing": "Keep it going!",
     "answered_one": "{{count}} question answered",
-    "answered_other": "{{count}} questions answered"
+    "answered_other": "{{count}} questions answered",
+    "openLearning": "Open Learning Dashboard"
   }
 }
